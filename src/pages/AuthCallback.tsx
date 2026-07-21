@@ -10,24 +10,41 @@ export default function AuthCallback() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-        if (userData) {
-          setAuth(session.access_token, userData)
-          setStatus('success')
-          setTimeout(() => navigate(userData.role === 'admin' ? '/admin' : '/home'), 1500)
-        } else {
-          setStatus('error')
-        }
-      } else {
+    let cancelled = false
+
+    const handleSession = async (session: any) => {
+      if (!session || cancelled) return
+      const { data: userData } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+        .single()
+      if (userData && !cancelled) {
+        setAuth(session.access_token, userData)
+        setStatus('success')
+        setTimeout(() => navigate(userData.role === 'admin' ? '/admin' : '/home'), 1500)
+      } else if (!cancelled) {
         setStatus('error')
       }
+    }
+
+    // Listen for auth state changes (catches hash tokens)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) handleSession(session)
     })
+
+    // Also try getSession after a delay (in case onAuthStateChange already fired)
+    const timer = setTimeout(async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) await handleSession(session)
+      else if (!cancelled) setStatus('error')
+    }, 2000)
+
+    return () => {
+      cancelled = true
+      subscription?.unsubscribe()
+      clearTimeout(timer)
+    }
   }, [])
 
   return (
