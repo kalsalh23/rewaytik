@@ -264,7 +264,7 @@ export default function CreateOrder() {
         },
         status: 'pending_payment',
         order_number: `RWK-${Date.now()}`,
-        total_amount: 0,
+        total_amount: 85000,
         timeline: [{ status: 'pending_payment', date: new Date().toISOString(), note: 'تم إنشاء الطلب' }],
       }
 
