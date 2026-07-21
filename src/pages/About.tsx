@@ -9,10 +9,11 @@ const values = [
 ]
 
 const team = [
-  { name: 'أحمد السالم', role: 'المؤسس والرئيس التنفيذي', initial: 'أ' },
-  { name: '4 نجوم للتمويه', role: 'فريق التمويه', initial: '٤' },
-  { name: 'خالد الحربي', role: 'مدير خدمة العملاء', initial: 'خ' },
-  { name: 'نورة القحطاني', role: 'كبيرة الكتاب', initial: 'ن' },
+  { name: 'قصي مهند الصالح', role: 'مؤسس ورئيس الفريق', initial: 'ق' },
+  { name: 'خالد اليوسف', role: 'مطور ومبرمج', initial: 'خ' },
+  { name: 'محمود الشقرة', role: 'مدير إداري', initial: 'م' },
+  { name: 'محمد الرسلان', role: 'مدير فني', initial: 'م' },
+  { name: 'محمد اليوسف', role: 'مسؤول التسويق', initial: 'م' },
 ]
 
 export default function About() {
