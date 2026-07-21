@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Readex Pro', sans-serif;
+    background-color: #edebe0;
+    color: #161616;
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  [dir="rtl"] {
+    text-align: right;
+  }
+}
+
+@layer components {
+  .container-custom {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-custom {
+      padding: 0 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-custom {
+      padding: 0 2rem;
+    }
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, #428177 0%, #054239 50%, #002623 100%);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, #b9a779 0%, #988561 50%, #b9a779 100%);
+  }
+
+  .gradient-dark {
+    background: linear-gradient(135deg, #161616 0%, #3d3a3b 50%, #161616 100%);
+  }
+
+  .shadow-card {
+    box-shadow: 0 2px 8px rgba(66, 129, 119, 0.08), 0 1px 3px rgba(66, 129, 119, 0.06);
+  }
+
+  .shadow-card-hover {
+    box-shadow: 0 8px 30px rgba(66, 129, 119, 0.12), 0 3px 8px rgba(66, 129, 119, 0.08);
+  }
+
+  .shadow-elevated {
+    box-shadow: 0 20px 60px rgba(5, 66, 57, 0.15), 0 5px 15px rgba(5, 66, 57, 0.1);
+  }
+}
