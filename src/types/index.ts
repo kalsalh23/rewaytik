@@ -156,3 +156,86 @@ export interface AuthResponse {
   token: string
   user: User
 }
+
+export type ManuscriptOrderStatus =
+  | 'new'
+  | 'under_review'
+  | 'awaiting_client'
+  | 'designing'
+  | 'formatting'
+  | 'illustrating'
+  | 'final_review'
+  | 'ready_to_print'
+  | 'completed'
+  | 'cancelled'
+
+export type BookLanguage = 'arabic' | 'english' | 'bilingual' | 'other'
+
+export type InternalImagesOption = 'none' | 'upload' | 'designer'
+
+export type PageLayoutOption = 'luxury' | 'classic' | 'modern' | 'simple' | 'designer'
+
+export interface ManuscriptAttachment {
+  id: string
+  manuscriptOrderId: string
+  fileUrl: string
+  fileName: string
+  fileSize: number
+  fileType: string
+  createdAt: string
+}
+
+export interface ManuscriptOrder {
+  id: string
+  orderNumber: string
+  userId: string
+  status: ManuscriptOrderStatus
+  bookTitle: string
+  authorName: string
+  showAuthorOnCover: boolean
+  bookSummary: string
+  bookLanguage: BookLanguage
+  manuscriptFileUrl: string
+  manuscriptFileName: string
+  manuscriptFileSize: number
+  bookCategory: string
+  visualStyles: string[]
+  internalImagesOption: InternalImagesOption
+  pageLayout: PageLayoutOption
+  additionalServices: string[]
+  additionalNotes: string
+  internalNotes: string
+  finalFileUrl: string
+  estimatedDays: number
+  timeline: ManuscriptTimeline[]
+  isArchived: boolean
+  createdAt: string
+  updatedAt: string
+  attachments?: ManuscriptAttachment[]
+}
+
+export interface ManuscriptTimeline {
+  status: ManuscriptOrderStatus
+  date: string
+  note?: string
+}
+
+export interface CreateManuscriptOrderInput {
+  book_title: string
+  author_name: string
+  show_author_on_cover: boolean
+  book_summary: string
+  book_language: BookLanguage
+  manuscript_file_url: string
+  manuscript_file_name: string
+  manuscript_file_size: number
+  book_category: string
+  visual_styles: string[]
+  internal_images_option: InternalImagesOption
+  page_layout: PageLayoutOption
+  additional_services: string[]
+  additional_notes: string
+  status: 'new'
+  order_number: string
+  timeline: ManuscriptTimeline[]
+}

@@ -18,6 +18,9 @@ import MyOrders from '@/pages/MyOrders'
 import OrderDetail from '@/pages/OrderDetail'
 import TrackOrder from '@/pages/TrackOrder'
 import CreateOrder from '@/pages/CreateOrder'
+import CreateBookManuscript from '@/pages/CreateBookManuscript'
+import MyManuscripts from '@/pages/MyManuscripts'
+import ManuscriptDetail from '@/pages/ManuscriptDetail'
 import Payment from '@/pages/Payment'
 import PaymentSuccess from '@/pages/PaymentSuccess'
 import PrivacyPolicy from '@/pages/PrivacyPolicy'
@@ -33,6 +36,8 @@ import AdminCustomers from '@/pages/admin/Customers'
 import AdminReports from '@/pages/admin/Reports'
 import AdminSettings from '@/pages/admin/Settings'
 import AdminGallery from '@/pages/admin/Gallery'
+import AdminManuscripts from '@/pages/admin/Manuscripts'
+import AdminManuscriptDetail from '@/pages/admin/ManuscriptDetail'
 import AdminPaymentNotifications from '@/pages/admin/PaymentNotifications'
 import AdminInquiries from '@/pages/admin/Inquiries'
 
@@ -88,6 +93,9 @@ function App() {
               <Route path="/order/:id" element={<OrderDetail />} />
               <Route path="/track-order" element={<TrackOrder />} />
               <Route path="/create-order" element={<CreateOrder />} />
+              <Route path="/create-manuscript" element={<CreateBookManuscript />} />
+              <Route path="/my-manuscripts" element={<MyManuscripts />} />
+              <Route path="/manuscript/:id" element={<ManuscriptDetail />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
             </Route>
@@ -105,6 +113,8 @@ function App() {
               <Route path="/admin/inquiries" element={<AdminInquiries />} />
               <Route path="/admin/payment-notifications" element={<AdminPaymentNotifications />} />
               <Route path="/admin/gallery" element={<AdminGallery />} />
+              <Route path="/admin/manuscripts" element={<AdminManuscripts />} />
+              <Route path="/admin/manuscripts/:id" element={<AdminManuscriptDetail />} />
             </Route>
           </Route>
 

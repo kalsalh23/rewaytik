@@ -112,6 +112,8 @@ ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE book_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_banners ENABLE ROW LEVEL SECURITY;
+ALTER TABLE manuscript_orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE manuscript_attachments ENABLE ROW LEVEL SECURITY;
 
 -- ============================
 -- Helper function (avoids RLS recursion)
@@ -164,6 +166,75 @@ CREATE POLICY "Public can read settings" ON site_settings FOR SELECT USING (true
 CREATE POLICY "Public can read banners" ON site_banners FOR SELECT USING (true);
 CREATE POLICY "Admin can insert banners" ON site_banners FOR INSERT WITH CHECK (public.is_admin());
 CREATE POLICY "Admin can delete banners" ON site_banners FOR DELETE USING (public.is_admin());
+
+-- Manuscript Orders: users see own, admin sees all
+CREATE POLICY "Users can read own manuscripts" ON manuscript_orders FOR SELECT USING (auth.uid() = user_id OR public.is_admin());
+CREATE POLICY "Users can create manuscripts" ON manuscript_orders FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own manuscripts" ON manuscript_orders FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admin can update manuscripts" ON manuscript_orders FOR UPDATE USING (public.is_admin());
+CREATE POLICY "Admin can delete manuscripts" ON manuscript_orders FOR DELETE USING (public.is_admin());
+
+-- Manuscript Attachments: users see own, admin sees all
+CREATE POLICY "Users can read own manuscript attachments" ON manuscript_attachments FOR SELECT USING (
+  EXISTS (SELECT 1 FROM manuscript_orders WHERE id = manuscript_order_id AND (user_id = auth.uid() OR public.is_admin()))
+);
+CREATE POLICY "Users can insert manuscript attachments" ON manuscript_attachments FOR INSERT WITH CHECK (
+  EXISTS (SELECT 1 FROM manuscript_orders WHERE id = manuscript_order_id AND user_id = auth.uid())
+);
+CREATE POLICY "Admin can delete manuscript attachments" ON manuscript_attachments FOR DELETE USING (public.is_admin());
+
+-- 8. Manuscript Orders (اصنع كتابك)
+CREATE TABLE IF NOT EXISTS manuscript_orders (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_number TEXT NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'new' CHECK (status IN (
+    'new', 'under_review', 'awaiting_client', 'designing',
+    'formatting', 'illustrating', 'final_review', 'ready_to_print', 'completed', 'cancelled'
+  )),
+  -- Step 1: Book Info
+  book_title TEXT NOT NULL,
+  author_name TEXT NOT NULL,
+  show_author_on_cover BOOLEAN DEFAULT true,
+  book_summary TEXT,
+  book_language TEXT DEFAULT 'arabic' CHECK (book_language IN ('arabic', 'english', 'bilingual', 'other')),
+  -- Step 2: Files
+  manuscript_file_url TEXT,
+  manuscript_file_name TEXT,
+  manuscript_file_size NUMERIC,
+  -- Step 4: Book Type
+  book_category TEXT NOT NULL,
+  -- Step 5: Visual Identity
+  visual_styles JSONB DEFAULT '[]',
+  -- Step 7: Internal Images
+  internal_images_option TEXT DEFAULT 'none' CHECK (internal_images_option IN ('none', 'upload', 'designer')),
+  -- Step 8: Page Layout
+  page_layout TEXT DEFAULT 'designer' CHECK (page_layout IN ('luxury', 'classic', 'modern', 'simple', 'designer')),
+  -- Step 9: Additional Services
+  additional_services JSONB DEFAULT '[]',
+  -- Step 10: Notes
+  additional_notes TEXT,
+  -- Admin fields
+  internal_notes TEXT,
+  final_file_url TEXT,
+  estimated_days INT,
+  -- Meta
+  timeline JSONB DEFAULT '[]',
+  is_archived BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 9. Manuscript Order Attachments (صور إضافية)
+CREATE TABLE IF NOT EXISTS manuscript_attachments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  manuscript_order_id UUID REFERENCES manuscript_orders(id) ON DELETE CASCADE,
+  file_url TEXT NOT NULL,
+  file_name TEXT,
+  file_size NUMERIC,
+  file_type TEXT DEFAULT 'image',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 
 -- ============================
 -- Create admin user trigger
@@ -226,6 +297,9 @@ INSERT INTO storage.buckets (id, name, public) VALUES ('order-images', 'order-im
 INSERT INTO storage.buckets (id, name, public) VALUES ('character-images', 'character-images', true) ON CONFLICT DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('payment-notifications', 'payment-notifications', true) ON CONFLICT DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('site-banners', 'site-banners', true) ON CONFLICT DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('manuscript-files', 'manuscript-files', false) ON CONFLICT DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('manuscript-attachments', 'manuscript-attachments', true) ON CONFLICT DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('manuscript-final', 'manuscript-final', false) ON CONFLICT DO NOTHING;
 
 -- Storage policies
 CREATE POLICY "Public can read order-images" ON storage.objects FOR SELECT USING (bucket_id = 'order-images');
@@ -237,3 +311,17 @@ CREATE POLICY "Authenticated can upload payment-notifications" ON storage.object
 CREATE POLICY "Public can read site-banners" ON storage.objects FOR SELECT USING (bucket_id = 'site-banners');
 CREATE POLICY "Admin can upload site-banners" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'site-banners' AND public.is_admin());
 CREATE POLICY "Admin can delete site-banners" ON storage.objects FOR DELETE USING (bucket_id = 'site-banners' AND public.is_admin());
+
+-- Manuscript Files (private - only owner and admin can read)
+CREATE POLICY "Owner can read manuscript-files" ON storage.objects FOR SELECT USING (bucket_id = 'manuscript-files' AND (auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin()));
+CREATE POLICY "Authenticated can upload manuscript-files" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'manuscript-files' AND auth.role() = 'authenticated');
+CREATE POLICY "Admin can delete manuscript-files" ON storage.objects FOR DELETE USING (bucket_id = 'manuscript-files' AND public.is_admin());
+
+-- Manuscript Attachments (public read, authenticated upload)
+CREATE POLICY "Public can read manuscript-attachments" ON storage.objects FOR SELECT USING (bucket_id = 'manuscript-attachments');
+CREATE POLICY "Authenticated can upload manuscript-attachments" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'manuscript-attachments' AND auth.role() = 'authenticated');
+CREATE POLICY "Admin can delete manuscript-attachments" ON storage.objects FOR DELETE USING (bucket_id = 'manuscript-attachments' AND public.is_admin());
+
+-- Manuscript Final Files (private - only owner and admin can read)
+CREATE POLICY "Owner can read manuscript-final" ON storage.objects FOR SELECT USING (bucket_id = 'manuscript-final' AND (auth.uid()::text = (storage.foldername(name))[1] OR public.is_admin()));
+CREATE POLICY "Admin can upload manuscript-final" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'manuscript-final' AND public.is_admin());

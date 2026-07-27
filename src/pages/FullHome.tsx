@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, BookOpen, Star, Shield, Heart, Camera, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowLeft, BookOpen, Star, Shield, Heart, Camera, Sparkles, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
@@ -135,6 +135,48 @@ export default function FullHome() {
             <Link to="/create-order">
               <Button variant="outline" size="lg">ابدأ كتابتك الآن <ArrowLeft className="w-5 h-5 mr-2" /></Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* اصنع كتابك - Create Your Book */}
+      <section className="py-20 bg-primary/5">
+        <div className="container-custom">
+          <div className="relative overflow-hidden rounded-3xl bg-card shadow-card">
+            <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 right-0 w-48 h-48 bg-accent/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="relative z-10 grid lg:grid-cols-2 gap-10 items-center p-10 md:p-14">
+              <div className="text-center lg:text-right">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 text-accent-dark text-sm font-medium mb-6">
+                  <FileText className="w-4 h-4" />
+                  خدمة جديدة
+                </span>
+                <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">
+                  📚 اصنع كتابك
+                </h2>
+                <p className="text-secondary-light leading-relaxed mb-8 max-w-lg lg:mx-0 mx-auto">
+                  حوّل مخطوطتك إلى كتاب احترافي بتصميم مميز، وغلاف جذاب، وصفحات منسقة، ورسوم عند الحاجة، جاهز للطباعة أو النشر الرقمي.
+                </p>
+                <div className="flex items-center justify-center lg:justify-start gap-4 flex-wrap">
+                  <Link to="/create-manuscript">
+                    <Button size="lg" className="shadow-lg shadow-primary/25">
+                      ابدأ الآن
+                      <ArrowLeft className="w-5 h-5 mr-2" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+              <div className="flex justify-center lg:justify-start">
+                <div className="relative w-full max-w-md">
+                  <div className="absolute -inset-4 bg-gradient-to-br from-accent/20 to-accent/5 rounded-3xl blur-2xl" />
+                  <img
+                    src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80"
+                    alt="اصنع كتابك"
+                    className="relative rounded-2xl shadow-2xl w-full h-auto object-cover aspect-[4/3]"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

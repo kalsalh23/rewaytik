@@ -10,6 +10,7 @@ const browseNavLinks = [
   { path: '/home', label: 'الرئيسية' },
   { path: '/how-it-works', label: 'كيف يعمل' },
   { path: '/create-order', label: 'طلب كتاب فوري' },
+  { path: '/create-manuscript', label: '📚 اصنع كتابك' },
   { path: '/gallery', label: 'معرض الأعمال' },
   { path: '/pricing', label: 'الأسعار' },
   { path: '/faq', label: 'الأسئلة الشائعة' },
@@ -89,6 +90,10 @@ export function Header() {
                       <BookOpen className="w-4 h-4 text-primary" />
                       طلباتي
                     </Link>
+                    <Link to="/my-manuscripts" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-primary/5 transition-colors">
+                      <BookOpen className="w-4 h-4 text-primary" />
+                      مخطوطاتي
+                    </Link>
                     {user?.role === 'admin' && (
                       <Link to="/admin" className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm hover:bg-primary/5 transition-colors">
                         لوحة التحكم
@@ -155,6 +160,9 @@ export function Header() {
                   </Link>
                   <Link to="/my-orders" onClick={() => setIsOpen(false)} className="px-4 py-3 rounded-lg text-sm hover:bg-primary/5">
                     طلباتي
+                  </Link>
+                  <Link to="/my-manuscripts" onClick={() => setIsOpen(false)} className="px-4 py-3 rounded-lg text-sm hover:bg-primary/5">
+                    مخطوطاتي
                   </Link>
                   <button onClick={handleLogout} className="px-4 py-3 rounded-lg text-sm text-error hover:bg-error/5 text-right cursor-pointer">
                     تسجيل خروج

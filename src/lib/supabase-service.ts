@@ -323,3 +323,110 @@ function mapOrderDetail(data: any) {
     },
   }
 }
+
+// ==================== MANUSCRIPT ORDERS ====================
+
+export async function createManuscriptOrder(order: any) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { data, error } = await supabase.from('manuscript_orders').insert({ ...order, user_id: user.id }).select().single()
+  if (error) throw error
+  return data
+}
+
+export async function getMyManuscripts() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const { data, error } = await supabase.from('manuscript_orders').select('*').eq('user_id', user.id).eq('is_archived', false).order('created_at', { ascending: false })
+  if (error) throw error
+  return (data || []).map(mapManuscriptOrder)
+}
+
+export async function getManuscriptOrder(id: string) {
+  const { data, error } = await supabase.from('manuscript_orders').select('*').eq('id', id).single()
+  if (error) throw error
+  const { data: attachments } = await supabase.from('manuscript_attachments').select('*').eq('manuscript_order_id', id).order('created_at', { ascending: true })
+  return { ...mapManuscriptOrderDetail(data), attachments: attachments || [] }
+}
+
+export async function getAllManuscriptOrders(params?: { fromDate?: string; toDate?: string }) {
+  let query = supabase.from('manuscript_orders').select('*').eq('is_archived', false).order('created_at', { ascending: false })
+  if (params?.fromDate) query = query.gte('created_at', params.fromDate)
+  if (params?.toDate) query = query.lte('created_at', params.toDate)
+  const { data, error } = await query
+  if (error) throw error
+  return (data || []).map(mapManuscriptOrder)
+}
+
+export async function updateManuscriptStatus(id: string, status: string, note?: string) {
+  const { data: existing } = await supabase.from('manuscript_orders').select('timeline').eq('id', id).single()
+  const timeline = [...(existing?.timeline || []), { status, date: new Date().toISOString(), note }]
+  const { error } = await supabase.from('manuscript_orders').update({ status, timeline, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw error
+}
+
+export async function updateManuscriptInternalNotes(id: string, internalNotes: string) {
+  const { error } = await supabase.from('manuscript_orders').update({ internal_notes: internalNotes, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw error
+}
+
+export async function uploadManuscriptFinalFile(id: string, file: File, userId: string) {
+  const filePath = `${userId}/${Date.now()}-${file.name}`
+  const { error: uploadError } = await supabase.storage.from('manuscript-final').upload(filePath, file)
+  if (uploadError) throw uploadError
+  const { data: { publicUrl } } = supabase.storage.from('manuscript-final').getPublicUrl(filePath)
+  const { error } = await supabase.from('manuscript_orders').update({ final_file_url: publicUrl, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw error
+  return publicUrl
+}
+
+export async function archiveManuscriptOrder(id: string) {
+  const { error } = await supabase.from('manuscript_orders').update({ is_archived: true }).eq('id', id)
+  if (error) throw error
+}
+
+export async function getManuscriptStats() {
+  const { data: all, error } = await supabase.from('manuscript_orders').select('id, status')
+  if (error) throw error
+  const total = all?.length || 0
+  const newCount = (all || []).filter((o: any) => o.status === 'new').length
+  const inProgress = (all || []).filter((o: any) => !['completed', 'cancelled'].includes(o.status)).length
+  const completed = (all || []).filter((o: any) => o.status === 'completed').length
+  return { total, newCount, inProgress, completed }
+}
+
+// ==================== MANUSCRIPT HELPERS ====================
+
+function mapManuscriptOrder(data: any) {
+  return {
+    id: data.id,
+    orderNumber: data.order_number,
+    userId: data.user_id,
+    status: data.status,
+    bookTitle: data.book_title,
+    authorName: data.author_name,
+    showAuthorOnCover: data.show_author_on_cover,
+    bookSummary: data.book_summary,
+    bookLanguage: data.book_language,
+    manuscriptFileUrl: data.manuscript_file_url,
+    manuscriptFileName: data.manuscript_file_name,
+    manuscriptFileSize: data.manuscript_file_size,
+    bookCategory: data.book_category,
+    visualStyles: data.visual_styles || [],
+    internalImagesOption: data.internal_images_option,
+    pageLayout: data.page_layout,
+    additionalServices: data.additional_services || [],
+    additionalNotes: data.additional_notes,
+    internalNotes: data.internal_notes,
+    finalFileUrl: data.final_file_url,
+    estimatedDays: data.estimated_days,
+    timeline: data.timeline || [],
+    isArchived: data.is_archived,
+    createdAt: data.created_at,
+    updatedAt: data.updated_at,
+  }
+}
+
+function mapManuscriptOrderDetail(data: any) {
+  return mapManuscriptOrder(data)
+}
