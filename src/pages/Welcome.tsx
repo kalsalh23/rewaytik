@@ -43,15 +43,15 @@ export default function Welcome() {
             </p>
 
             <div className="flex items-center justify-center gap-4 flex-wrap">
-              <Link to="/create-order">
+              <Link to="/home">
                 <Button size="lg" className="shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow">
-                  ابدأ قصتك الآن
+                  ابدأ الآن
                   <ArrowLeft className="w-5 h-5 mr-2" />
                 </Button>
               </Link>
-              <Link to="/home">
+              <Link to="/login">
                 <Button variant="outline" size="lg">
-                  الدخول كزائر
+                  تسجيل الدخول
                 </Button>
               </Link>
             </div>
