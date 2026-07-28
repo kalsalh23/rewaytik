@@ -91,6 +91,9 @@ export default function CreateBookManuscript() {
     additionalNotes: '',
   })
 
+  const [uploading, setUploading] = useState(false)
+  const [uploadMessage, setUploadMessage] = useState('')
+
   const [fileAnalysis, setFileAnalysis] = useState<{
     words: number
     pages: number
@@ -182,35 +185,55 @@ export default function CreateBookManuscript() {
     window.scrollTo(0, 0)
   }
 
-  const uploadFileToSupabase = async (file: File, bucket: string): Promise<{ url: string; name: string; size: number }> => {
+  const uploadFileToSupabase = async (
+    file: File,
+    bucket: string,
+    onProgress?: (percent: number) => void
+  ): Promise<{ url: string; name: string; size: number }> => {
     const filePath = `${user?.id}/${Date.now()}-${file.name}`
-    const { error } = await supabase.storage.from(bucket).upload(filePath, file)
+
+    const { error } = await supabase.storage.from(bucket).upload(filePath, file, {
+      upsert: false,
+      cacheControl: '3600',
+    })
     if (error) throw error
+
     const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
+    if (onProgress) onProgress(100)
     return { url: publicUrl, name: file.name, size: file.size }
   }
 
   const handleSubmit = async () => {
     setLoading(true)
+    setUploading(true)
     setUploadProgress(0)
+    setUploadMessage('جاري تحضير الملفات...')
     try {
       let fileInfo = { url: '', name: '', size: 0 }
       if (form.manuscriptFile) {
-        setUploadProgress(20)
-        fileInfo = await uploadFileToSupabase(form.manuscriptFile, 'manuscript-files')
+        setUploadMessage(`جاري رفع المخطوطة: ${form.manuscriptFile.name}`)
+        setUploadProgress(5)
+        fileInfo = await uploadFileToSupabase(form.manuscriptFile, 'manuscript-files', (pct) => {
+          setUploadProgress(Math.min(pct, 50))
+        })
         setUploadProgress(50)
       }
 
       let uploadedImages: { url: string; name: string; size: number }[] = []
       if (form.additionalImages.length > 0) {
-        setUploadProgress(60)
         for (let i = 0; i < form.additionalImages.length; i++) {
-          const result = await uploadFileToSupabase(form.additionalImages[i], 'manuscript-attachments')
+          setUploadMessage(`جاري رفع الصورة ${i + 1} من ${form.additionalImages.length}...`)
+          const result = await uploadFileToSupabase(form.additionalImages[i], 'manuscript-attachments', (pct) => {
+            const base = 50 + ((i / form.additionalImages.length) * 30)
+            setUploadProgress(Math.min(base + (pct * (1 / form.additionalImages.length) * 30), 80))
+          })
           uploadedImages.push(result)
-          setUploadProgress(60 + Math.floor((i + 1) / form.additionalImages.length) * 20)
         }
+        setUploadProgress(80)
       }
 
+      setUploadMessage('جاري حفظ الطلب...')
+      setUploadProgress(85)
       const orderData = {
         book_title: form.bookTitle,
         author_name: form.authorName,
@@ -231,10 +254,11 @@ export default function CreateBookManuscript() {
         timeline: [{ status: 'new' as const, date: new Date().toISOString(), note: 'تم إنشاء الطلب' }],
       }
 
-      setUploadProgress(85)
       const order = await createManuscriptOrder(orderData)
+      setUploadProgress(92)
 
       if (uploadedImages.length > 0 && order) {
+        setUploadMessage('جاري حفظ المرفقات...')
         const attachments = uploadedImages.map(img => ({
           manuscript_order_id: order.id,
           file_url: img.url,
@@ -246,13 +270,16 @@ export default function CreateBookManuscript() {
       }
 
       setUploadProgress(100)
+      setUploadMessage('تم بنجاح!')
       toast.success('تم إرسال طلبك بنجاح!')
       navigate('/my-manuscripts')
     } catch (e: any) {
       toast.error(e?.message || 'حدث خطأ في الاتصال بالخادم')
     } finally {
       setLoading(false)
+      setUploading(false)
       setUploadProgress(0)
+      setUploadMessage('')
     }
   }
 
@@ -370,17 +397,33 @@ export default function CreateBookManuscript() {
                       ملف المخطوطة <span className="text-error">*</span>
                     </label>
                     <div
-                      className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-                        form.manuscriptFile ? 'border-green-400 bg-green-50' : 'border-border hover:border-primary/30'
+                      className={`border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+                        form.manuscriptFile ? 'border-green-400 bg-green-50' : 'border-border hover:border-primary/50 hover:bg-primary/5'
                       }`}
+                      onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5') }}
+                      onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5') }}
+                      onDrop={(e) => {
+                        e.preventDefault()
+                        e.currentTarget.classList.remove('border-primary', 'bg-primary/5')
+                        const file = e.dataTransfer.files[0]
+                        if (file) {
+                          const fakeEvent = { target: { files: [file] } } as any
+                          handleFileSelect(fakeEvent)
+                        }
+                      }}
                     >
                       {form.manuscriptFile ? (
                         <div className="space-y-3">
-                          <FileText className="w-12 h-12 text-primary mx-auto" />
+                          <FileText className="w-12 h-12 text-green-500 mx-auto" />
                           <p className="font-medium text-secondary">{form.manuscriptPreview}</p>
                           <p className="text-sm text-secondary/60">{(form.manuscriptFile.size / 1024 / 1024).toFixed(2)} MB</p>
                           <button
-                            onClick={() => { updateField('manuscriptFile', null); updateField('manuscriptPreview', ''); setFileAnalysis(null) }}
+                            onClick={() => {
+                              updateField('manuscriptFile', null)
+                              updateField('manuscriptPreview', '')
+                              setFileAnalysis(null)
+                              if (fileInputRef.current) fileInputRef.current.value = ''
+                            }}
                             className="text-sm text-error hover:underline cursor-pointer"
                           >
                             إزالة الملف
@@ -393,7 +436,16 @@ export default function CreateBookManuscript() {
                           <p className="text-sm text-secondary/60">Word (DOCX/DOC) أو PDF - حتى 50MB</p>
                         </div>
                       )}
-                      <input ref={fileInputRef} type="file" accept=".docx,.doc,.pdf" className="hidden" onChange={handleFileSelect} />
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".docx,.doc,.pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          handleFileSelect(e)
+                          e.target.value = ''
+                        }}
+                      />
                     </div>
                   </div>
 
@@ -402,11 +454,22 @@ export default function CreateBookManuscript() {
                       صور إضافية <span className="text-muted-foreground">(اختياري)</span>
                     </label>
                     <div
-                      className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary/30 transition-colors cursor-pointer"
+                      className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer"
                       onClick={() => imagesInputRef.current?.click()}
+                      onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5') }}
+                      onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5') }}
+                      onDrop={(e) => {
+                        e.preventDefault()
+                        e.currentTarget.classList.remove('border-primary', 'bg-primary/5')
+                        const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))
+                        if (files.length > 0) {
+                          updateField('additionalImages', [...form.additionalImages, ...files])
+                          toast.success(`تم إضافة ${files.length} صورة`)
+                        }
+                      }}
                     >
                       <ImageIcon className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
-                      <p className="text-sm text-secondary/60">اختر الصور من جهازك</p>
+                      <p className="text-sm text-secondary/60">اختر الصور من جهازك أو اسحبها هنا</p>
                       <p className="text-xs text-muted-foreground mt-1">PNG, JPG, JPEG</p>
                     </div>
                     <input
@@ -415,7 +478,10 @@ export default function CreateBookManuscript() {
                       accept="image/png,image/jpeg,image/jpg"
                       multiple
                       className="hidden"
-                      onChange={handleImagesSelect}
+                      onChange={(e) => {
+                        handleImagesSelect(e)
+                        e.target.value = ''
+                      }}
                     />
                     {form.additionalImages.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-3">
@@ -706,6 +772,25 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
+            {/* Upload Progress Bar */}
+            {uploading && (
+              <div className="mt-6 p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-secondary flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                    {uploadMessage}
+                  </span>
+                  <span className="text-sm font-bold text-primary">{Math.round(uploadProgress)}%</span>
+                </div>
+                <div className="w-full h-3 bg-border rounded-full overflow-hidden">
+                  <div
+                    className="h-full gradient-primary rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Navigation */}
             <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
               {step > 0 ? (
@@ -724,7 +809,7 @@ export default function CreateBookManuscript() {
                   {loading ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      جاري الإرسال... {uploadProgress}%
+                      جاري الرفع... {Math.round(uploadProgress)}%
                     </span>
                   ) : (
                     'إرسال الطلب'
