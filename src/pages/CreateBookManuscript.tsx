@@ -43,6 +43,7 @@ interface FormData {
   bookLanguage: string
   manuscriptFile: File | null
   manuscriptPreview: string
+  additionalImages: File[]
   bookCategory: string
   visualStyles: string[]
   internalImagesOption: string
@@ -70,6 +71,7 @@ export default function CreateBookManuscript() {
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const imagesInputRef = useRef<HTMLInputElement>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
 
   const [form, setForm] = useState<FormData>({
@@ -80,6 +82,7 @@ export default function CreateBookManuscript() {
     bookLanguage: 'arabic',
     manuscriptFile: null,
     manuscriptPreview: '',
+    additionalImages: [],
     bookCategory: '',
     visualStyles: [],
     internalImagesOption: 'none',
@@ -109,6 +112,22 @@ export default function CreateBookManuscript() {
     updateField('manuscriptFile', file)
     updateField('manuscriptPreview', file.name)
     simulateAnalysis()
+  }
+
+  const handleImagesSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    const newImages = Array.from(files).filter(f => f.type.startsWith('image/'))
+    if (newImages.length === 0) {
+      toast.error('يجب أن تكون الصور بصيغة PNG أو JPG')
+      return
+    }
+    updateField('additionalImages', [...form.additionalImages, ...newImages])
+    toast.success(`تم إضافة ${newImages.length} صورة`)
+  }
+
+  const removeImage = (index: number) => {
+    updateField('additionalImages', form.additionalImages.filter((_, i) => i !== index))
   }
 
   const simulateAnalysis = () => {
@@ -163,11 +182,11 @@ export default function CreateBookManuscript() {
     window.scrollTo(0, 0)
   }
 
-  const uploadFileToSupabase = async (file: File): Promise<{ url: string; name: string; size: number }> => {
+  const uploadFileToSupabase = async (file: File, bucket: string): Promise<{ url: string; name: string; size: number }> => {
     const filePath = `${user?.id}/${Date.now()}-${file.name}`
-    const { error } = await supabase.storage.from('manuscript-files').upload(filePath, file)
+    const { error } = await supabase.storage.from(bucket).upload(filePath, file)
     if (error) throw error
-    const { data: { publicUrl } } = supabase.storage.from('manuscript-files').getPublicUrl(filePath)
+    const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(filePath)
     return { url: publicUrl, name: file.name, size: file.size }
   }
 
@@ -177,9 +196,19 @@ export default function CreateBookManuscript() {
     try {
       let fileInfo = { url: '', name: '', size: 0 }
       if (form.manuscriptFile) {
-        setUploadProgress(30)
-        fileInfo = await uploadFileToSupabase(form.manuscriptFile)
-        setUploadProgress(70)
+        setUploadProgress(20)
+        fileInfo = await uploadFileToSupabase(form.manuscriptFile, 'manuscript-files')
+        setUploadProgress(50)
+      }
+
+      let uploadedImages: { url: string; name: string; size: number }[] = []
+      if (form.additionalImages.length > 0) {
+        setUploadProgress(60)
+        for (let i = 0; i < form.additionalImages.length; i++) {
+          const result = await uploadFileToSupabase(form.additionalImages[i], 'manuscript-attachments')
+          uploadedImages.push(result)
+          setUploadProgress(60 + Math.floor((i + 1) / form.additionalImages.length) * 20)
+        }
       }
 
       const orderData = {
@@ -202,8 +231,20 @@ export default function CreateBookManuscript() {
         timeline: [{ status: 'new' as const, date: new Date().toISOString(), note: 'تم إنشاء الطلب' }],
       }
 
-      setUploadProgress(90)
-      await createManuscriptOrder(orderData)
+      setUploadProgress(85)
+      const order = await createManuscriptOrder(orderData)
+
+      if (uploadedImages.length > 0 && order) {
+        const attachments = uploadedImages.map(img => ({
+          manuscript_order_id: order.id,
+          file_url: img.url,
+          file_name: img.name,
+          file_size: img.size,
+          file_type: 'image',
+        }))
+        await supabase.from('manuscript_attachments').insert(attachments)
+      }
+
       setUploadProgress(100)
       toast.success('تم إرسال طلبك بنجاح!')
       navigate('/my-manuscripts')
@@ -360,13 +401,42 @@ export default function CreateBookManuscript() {
                     <label className="block text-sm font-medium text-secondary mb-2">
                       صور إضافية <span className="text-muted-foreground">(اختياري)</span>
                     </label>
-                    <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary/30 transition-colors">
-                      <div className="cursor-pointer">
-                        <ImageIcon className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-sm text-secondary/60">اختر الصور من جهازك</p>
-                        <p className="text-xs text-muted-foreground mt-1">PNG, JPG, JPEG</p>
-                      </div>
+                    <div
+                      className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary/30 transition-colors cursor-pointer"
+                      onClick={() => imagesInputRef.current?.click()}
+                    >
+                      <ImageIcon className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-secondary/60">اختر الصور من جهازك</p>
+                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG, JPEG</p>
                     </div>
+                    <input
+                      ref={imagesInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg"
+                      multiple
+                      className="hidden"
+                      onChange={handleImagesSelect}
+                    />
+                    {form.additionalImages.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        {form.additionalImages.map((img, i) => (
+                          <div key={i} className="relative group">
+                            <img
+                              src={URL.createObjectURL(img)}
+                              alt={img.name}
+                              className="w-20 h-20 object-cover rounded-xl border-2 border-border"
+                            />
+                            <button
+                              onClick={(e) => { e.stopPropagation(); removeImage(i) }}
+                              className="absolute -top-2 -left-2 w-5 h-5 bg-error text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                            <p className="text-xs text-secondary/60 mt-1 truncate max-w-[80px]">{img.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
