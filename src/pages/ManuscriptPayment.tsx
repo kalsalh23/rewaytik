@@ -164,9 +164,9 @@ export default function ManuscriptPayment() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-secondary-light">رقم المحفظة</span>
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-secondary dir-ltr" style={{ direction: 'ltr' }}>{shamCashInfo.walletNumber}</span>
-                  <button onClick={copyNumber} className="p-1.5 rounded-lg hover:bg-primary/5 transition-colors cursor-pointer" title="نسخ الرقم">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-medium text-secondary text-xs break-all leading-relaxed" style={{ direction: 'ltr', textAlign: 'right', unicodeBidi: 'bidi-override' }}>{shamCashInfo.walletNumber}</span>
+                  <button onClick={copyNumber} className="p-1.5 rounded-lg hover:bg-primary/5 transition-colors cursor-pointer flex-shrink-0" title="نسخ الرقم">
                     {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-primary" />}
                   </button>
                 </div>

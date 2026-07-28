@@ -322,7 +322,7 @@ export default function AdminManuscriptDetail() {
                   {manuscript.walletNumber && (
                     <div className="p-3 rounded-xl bg-accent/30">
                       <span className="text-xs text-secondary/60">رقم المحفظة</span>
-                      <p className="font-medium text-sm">{manuscript.walletNumber}</p>
+                      <p className="font-medium text-xs break-all" style={{ direction: 'ltr', textAlign: 'right', unicodeBidi: 'bidi-override' }}>{manuscript.walletNumber}</p>
                     </div>
                   )}
                   <div className="flex gap-2">
