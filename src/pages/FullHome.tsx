@@ -70,6 +70,12 @@ export default function FullHome() {
                     <ArrowLeft className="w-5 h-5 mr-2" />
                   </Button>
                 </Link>
+                <Link to="/create-manuscript">
+                  <Button size="lg" className="shadow-lg shadow-accent/25 bg-accent hover:bg-accent-dark">
+                    اصنع كتابك
+                    <FileText className="w-5 h-5 mr-2" />
+                  </Button>
+                </Link>
                 <Link to="/how-it-works">
                   <Button variant="outline" size="lg">كيف يعمل الموقع</Button>
                 </Link>
