@@ -189,11 +189,13 @@ export default function CreateBookManuscript() {
     bucket: string,
     onProgress?: (percent: number) => void
   ): Promise<{ url: string; name: string; size: number }> => {
-    const filePath = `${user?.id}/${Date.now()}-${file.name}`
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+    const filePath = `${user?.id}/${Date.now()}-${safeName}`
 
     const { error } = await supabase.storage.from(bucket).upload(filePath, file, {
       upsert: false,
       cacheControl: '3600',
+      contentType: file.type || undefined,
     })
     if (error) throw error
 
