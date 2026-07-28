@@ -271,7 +271,7 @@ export default function CreateBookManuscript() {
       setUploadProgress(100)
       setUploadMessage('تم بنجاح!')
       toast.success('تم إرسال طلبك بنجاح!')
-      navigate('/my-manuscripts')
+      navigate(`/pay-manuscript/${order.id}`)
     } catch (e: any) {
       toast.error(e?.message || 'حدث خطأ في الاتصال بالخادم')
     } finally {

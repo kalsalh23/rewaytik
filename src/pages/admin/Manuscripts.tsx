@@ -80,6 +80,7 @@ export default function AdminManuscripts() {
                     <th className="text-right py-3 px-4 font-medium text-secondary/60">اسم الكتاب</th>
                     <th className="text-right py-3 px-4 font-medium text-secondary/60">المؤلف</th>
                     <th className="text-right py-3 px-4 font-medium text-secondary/60">نوع الكتاب</th>
+                    <th className="text-right py-3 px-4 font-medium text-secondary/60">الدفع</th>
                     <th className="text-right py-3 px-4 font-medium text-secondary/60">الحالة</th>
                     <th className="text-right py-3 px-4 font-medium text-secondary/60">التاريخ</th>
                     <th className="text-right py-3 px-4 font-medium text-secondary/60">إجراءات</th>
@@ -92,6 +93,17 @@ export default function AdminManuscripts() {
                       <td className="py-3 px-4">{m.bookTitle}</td>
                       <td className="py-3 px-4">{m.authorName}</td>
                       <td className="py-3 px-4">{m.bookCategory}</td>
+                      <td className="py-3 px-4">
+                        {m.paymentStatus === 'approved' ? (
+                          <Badge variant="info" className="bg-success/10 text-success border-success/20">مدفوع</Badge>
+                        ) : m.paymentStatus === 'reviewing' ? (
+                          <Badge variant="info" className="bg-warning/10 text-warning border-warning/20">قيد المراجعة</Badge>
+                        ) : m.paymentStatus === 'rejected' ? (
+                          <Badge variant="info" className="bg-error/10 text-error border-error/20">مرفوض</Badge>
+                        ) : (
+                          <Badge variant="info" className="bg-muted/10 text-muted-foreground border-muted/20">بانتظار الدفع</Badge>
+                        )}
+                      </td>
                       <td className="py-3 px-4">
                         <Badge variant="info" className={getManuscriptStatusColor(m.status)}>
                           {getManuscriptStatusLabel(m.status)}

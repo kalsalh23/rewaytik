@@ -1,0 +1,95 @@
+@host = https://localhost:5001
+
+### Login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@riwayatek.com",
+  "password": "admin123"
+}
+
+### Register
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "مستخدم جديد",
+  "email": "user@example.com",
+  "phone": "0551234567",
+  "password": "password123",
+  "confirmPassword": "password123"
+}
+
+### Get Profile
+GET {{host}}/api/auth/profile
+Authorization: Bearer {{token}}
+
+### Get Book Types
+GET {{host}}/api/booktypes
+
+### Create Order
+POST {{host}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "bookTypeId": "00000000-0000-0000-0000-000000000001",
+  "characterName": "ليان أحمد",
+  "age": 5,
+  "nationality": "سعودي",
+  "hobbies": ["الرسم", "السباحة"],
+  "qualities": ["مبدعة", "مرحة"],
+  "memories": ["أول يوم في المدرسة"],
+  "storyType": "قصة طفولة",
+  "storyGoal": "توثيق الذكريات",
+  "clientMessage": "رسالة العميل",
+  "shippingAddress": {
+    "fullName": "أحمد محمد",
+    "phone": "0551234567",
+    "city": "الرياض",
+    "district": "النخيل",
+    "street": "شارع الأمير محمد",
+    "buildingNumber": "15",
+    "additionalDetails": ""
+  }
+}
+
+### Get My Orders
+GET {{host}}/api/orders/my-orders
+Authorization: Bearer {{token}}
+
+### Get All Orders (Admin)
+GET {{host}}/api/orders/all
+Authorization: Bearer {{token}}
+
+### Update Order Status
+PUT {{host}}/api/orders/{{orderId}}/status
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+"writing"
+
+### Approve Payment
+PUT {{host}}/api/orders/{{orderId}}/payment
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "approved": true
+}
+
+### Send Contact Message
+POST {{host}}/api/contact
+Content-Type: application/json
+
+{
+  "name": "عميل",
+  "email": "client@example.com",
+  "subject": "استفسار",
+  "message": "نص الرسالة"
+}
+
+### Get Dashboard (Admin)
+GET {{host}}/api/admin/dashboard
+Authorization: Bearer {{token}}

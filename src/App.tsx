@@ -19,6 +19,7 @@ import OrderDetail from '@/pages/OrderDetail'
 import TrackOrder from '@/pages/TrackOrder'
 import CreateOrder from '@/pages/CreateOrder'
 import CreateBookManuscript from '@/pages/CreateBookManuscript'
+import ManuscriptPayment from '@/pages/ManuscriptPayment'
 import MyManuscripts from '@/pages/MyManuscripts'
 import ManuscriptDetail from '@/pages/ManuscriptDetail'
 import Payment from '@/pages/Payment'
@@ -94,6 +95,7 @@ function App() {
               <Route path="/track-order" element={<TrackOrder />} />
               <Route path="/create-order" element={<CreateOrder />} />
               <Route path="/create-manuscript" element={<CreateBookManuscript />} />
+              <Route path="/pay-manuscript/:id" element={<ManuscriptPayment />} />
               <Route path="/my-manuscripts" element={<MyManuscripts />} />
               <Route path="/manuscript/:id" element={<ManuscriptDetail />} />
               <Route path="/payment" element={<Payment />} />

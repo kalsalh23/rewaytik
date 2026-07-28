@@ -1,0 +1,38 @@
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.deps.json
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.pdb
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Application.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Application.pdb
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Domain.pdb
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.AssemblyInfo.cs
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayate.DC0A0C99.Up2Date
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\refint\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.pdb
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.genruntimeconfig.cache
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\ref\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.deps.json
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.runtimeconfig.json
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Infrastructure.pdb
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Application.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Application.pdb
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\bin\Debug\net10.0\Riwayatek.Domain.pdb
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.AssemblyInfo.cs
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayate.DC0A0C99.Up2Date
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\refint\Riwayatek.Infrastructure.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.pdb
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\Riwayatek.Infrastructure.genruntimeconfig.cache
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Infrastructure\obj\Debug\net10.0\ref\Riwayatek.Infrastructure.dll

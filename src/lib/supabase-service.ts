@@ -358,6 +358,26 @@ export async function getAllManuscriptOrders(params?: { fromDate?: string; toDat
   return (data || []).map(mapManuscriptOrder)
 }
 
+export async function updateManuscriptPayment(id: string, paymentImageUrl: string, walletNumber: string) {
+  const { error } = await supabase.from('manuscript_orders').update({
+    payment_image_url: paymentImageUrl,
+    wallet_number: walletNumber,
+    payment_status: 'reviewing',
+    updated_at: new Date().toISOString(),
+  }).eq('id', id)
+  if (error) throw error
+}
+
+export async function updateManuscriptPaymentStatus(id: string, paymentStatus: string, note?: string) {
+  const { data: existing } = await supabase.from('manuscript_orders').select('timeline').eq('id', id).single()
+  const timeline = [...(existing?.timeline || []), { status: `payment_${paymentStatus}`, date: new Date().toISOString(), note }]
+  const updates: any = { payment_status: paymentStatus, timeline, updated_at: new Date().toISOString() }
+  if (paymentStatus === 'approved') updates.status = 'under_review'
+  if (paymentStatus === 'rejected') updates.payment_notes = note
+  const { error } = await supabase.from('manuscript_orders').update(updates).eq('id', id)
+  if (error) throw error
+}
+
 export async function updateManuscriptStatus(id: string, status: string, note?: string) {
   const { data: existing } = await supabase.from('manuscript_orders').select('timeline').eq('id', id).single()
   const timeline = [...(existing?.timeline || []), { status, date: new Date().toISOString(), note }]
@@ -403,6 +423,12 @@ function mapManuscriptOrder(data: any) {
     orderNumber: data.order_number,
     userId: data.user_id,
     status: data.status,
+    paymentStatus: data.payment_status || 'pending',
+    paymentAmount: data.payment_amount,
+    paymentMethod: data.payment_method,
+    walletNumber: data.wallet_number,
+    paymentImageUrl: data.payment_image_url,
+    paymentNotes: data.payment_notes,
     bookTitle: data.book_title,
     authorName: data.author_name,
     showAuthorOnCover: data.show_author_on_cover,

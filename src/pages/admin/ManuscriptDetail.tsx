@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Download, Loader2, FileText, Clock, CheckCircle, Save, Upload } from 'lucide-react'
+import { ArrowLeft, Download, Loader2, FileText, Clock, CheckCircle, Save, Upload, Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { getManuscriptStatusColor, getManuscriptStatusLabel, formatDate } from '@/lib/utils'
 import { toast } from 'react-hot-toast'
-import { getManuscriptOrder, updateManuscriptStatus, updateManuscriptInternalNotes, uploadManuscriptFinalFile } from '@/lib/supabase-service'
+import { getManuscriptOrder, updateManuscriptStatus, updateManuscriptInternalNotes, uploadManuscriptFinalFile, updateManuscriptPaymentStatus } from '@/lib/supabase-service'
 import { useAuthStore } from '@/store/auth'
 
 const allStatuses = [
@@ -305,6 +305,57 @@ export default function AdminManuscriptDetail() {
               </div>
             </CardContent>
           </Card>
+
+          {manuscript.paymentStatus === 'reviewing' && (
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-lg font-semibold text-secondary mb-4 flex items-center gap-2">
+                  <Wallet className="w-5 h-5 text-primary" />
+                  مراجعة الدفع
+                </h2>
+                <div className="space-y-3">
+                  {manuscript.paymentImageUrl && (
+                    <a href={manuscript.paymentImageUrl} target="_blank" rel="noopener noreferrer">
+                      <img src={manuscript.paymentImageUrl} alt="إشعار الدفع" className="w-full rounded-xl border border-border" />
+                    </a>
+                  )}
+                  {manuscript.walletNumber && (
+                    <div className="p-3 rounded-xl bg-accent/30">
+                      <span className="text-xs text-secondary/60">رقم المحفظة</span>
+                      <p className="font-medium text-sm">{manuscript.walletNumber}</p>
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    <Button variant="success" className="flex-1" onClick={async () => {
+                      if (!id) return
+                      setSaving(true)
+                      try {
+                        await updateManuscriptPaymentStatus(id, 'approved', 'تم الموافقة على الدفع')
+                        setManuscript((prev) => ({ ...prev, paymentStatus: 'approved', status: 'under_review' }))
+                        setStatus('under_review')
+                        toast.success('تم الموافقة على الدفع')
+                      } catch { toast.error('فشل الموافقة') }
+                      setSaving(false)
+                    }} loading={saving}>
+                      الموافقة
+                    </Button>
+                    <Button variant="danger" className="flex-1" onClick={async () => {
+                      if (!id) return
+                      setSaving(true)
+                      try {
+                        await updateManuscriptPaymentStatus(id, 'rejected', 'تم رفض الدفع')
+                        setManuscript((prev) => ({ ...prev, paymentStatus: 'rejected' }))
+                        toast.success('تم رفض الدفع')
+                      } catch { toast.error('فشل الرفض') }
+                      setSaving(false)
+                    }} loading={saving}>
+                      الرفض
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardContent className="p-6">

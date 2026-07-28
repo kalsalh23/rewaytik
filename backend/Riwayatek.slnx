@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Riwayatek.Api/Riwayatek.Api.csproj" />
+  <Project Path="Riwayatek.Application/Riwayatek.Application.csproj" />
+  <Project Path="Riwayatek.Domain/Riwayatek.Domain.csproj" />
+  <Project Path="Riwayatek.Infrastructure/Riwayatek.Infrastructure.csproj" />
+</Solution>

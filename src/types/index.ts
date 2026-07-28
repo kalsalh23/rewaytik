@@ -169,6 +169,8 @@ export type ManuscriptOrderStatus =
   | 'completed'
   | 'cancelled'
 
+export type ManuscriptPaymentStatus = 'pending' | 'reviewing' | 'approved' | 'rejected'
+
 export type BookLanguage = 'arabic' | 'english' | 'bilingual' | 'other'
 
 export type InternalImagesOption = 'none' | 'upload' | 'designer'
@@ -190,6 +192,12 @@ export interface ManuscriptOrder {
   orderNumber: string
   userId: string
   status: ManuscriptOrderStatus
+  paymentStatus: ManuscriptPaymentStatus
+  paymentAmount: number
+  paymentMethod: string
+  walletNumber: string
+  paymentImageUrl: string
+  paymentNotes: string
   bookTitle: string
   authorName: string
   showAuthorOnCover: boolean

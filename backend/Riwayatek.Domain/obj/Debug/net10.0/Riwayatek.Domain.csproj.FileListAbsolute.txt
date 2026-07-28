@@ -1,0 +1,22 @@
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\bin\Debug\net10.0\Riwayatek.Domain.deps.json
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\bin\Debug\net10.0\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\bin\Debug\net10.0\Riwayatek.Domain.pdb
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.AssemblyInfoInputs.cache
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.AssemblyInfo.cs
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\refint\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.pdb
+C:\Users\ASUS\Desktop\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\ref\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\bin\Debug\net10.0\Riwayatek.Domain.deps.json
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\bin\Debug\net10.0\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\bin\Debug\net10.0\Riwayatek.Domain.pdb
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.AssemblyInfoInputs.cache
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.AssemblyInfo.cs
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.csproj.CoreCompileInputs.cache
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\refint\Riwayatek.Domain.dll
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\Riwayatek.Domain.pdb
+C:\Users\ASUS\Desktop\the whrie\the whrie\riwayatek\backend\Riwayatek.Domain\obj\Debug\net10.0\ref\Riwayatek.Domain.dll
