@@ -103,7 +103,7 @@ export default function CreateBookManuscript() {
     estimatedTime: string
   } | null>(null)
 
-  const updateField = (field: keyof FormData, val: any) => setForm({ ...form, [field]: val })
+  const updateField = (field: keyof FormData, val: any) => setForm((prev) => ({ ...prev, [field]: val }))
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -112,8 +112,7 @@ export default function CreateBookManuscript() {
       toast.error('يجب أن يكون الملف Word أو PDF')
       return
     }
-    updateField('manuscriptFile', file)
-    updateField('manuscriptPreview', file.name)
+    setForm((prev) => ({ ...prev, manuscriptFile: file, manuscriptPreview: file.name }))
     simulateAnalysis()
   }
 
@@ -125,12 +124,12 @@ export default function CreateBookManuscript() {
       toast.error('يجب أن تكون الصور بصيغة PNG أو JPG')
       return
     }
-    updateField('additionalImages', [...form.additionalImages, ...newImages])
+    setForm((prev) => ({ ...prev, additionalImages: [...prev.additionalImages, ...newImages] }))
     toast.success(`تم إضافة ${newImages.length} صورة`)
   }
 
   const removeImage = (index: number) => {
-    updateField('additionalImages', form.additionalImages.filter((_, i) => i !== index))
+    setForm((prev) => ({ ...prev, additionalImages: prev.additionalImages.filter((_, i) => i !== index) }))
   }
 
   const simulateAnalysis = () => {
