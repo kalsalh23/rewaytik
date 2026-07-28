@@ -189,6 +189,45 @@ export default function ManuscriptDetail() {
             </CardContent>
           </Card>
 
+          {manuscript.paymentStatus && manuscript.paymentStatus !== 'pending' && (
+            <Card>
+              <CardContent className="p-6">
+                <h2 className="text-lg font-semibold text-secondary mb-4">حالة الدفع</h2>
+                <div className="space-y-3">
+                  <div className="p-3 rounded-xl bg-accent/30 flex items-center justify-between">
+                    <span className="text-sm text-secondary/60">الحالة</span>
+                    <Badge className={
+                      manuscript.paymentStatus === 'approved' ? 'bg-success/10 text-success' :
+                      manuscript.paymentStatus === 'reviewing' ? 'bg-warning/10 text-warning' :
+                      manuscript.paymentStatus === 'rejected' ? 'bg-error/10 text-error' : ''
+                    }>
+                      {manuscript.paymentStatus === 'approved' ? 'تمت الموافقة' :
+                       manuscript.paymentStatus === 'reviewing' ? 'قيد المراجعة' :
+                       manuscript.paymentStatus === 'rejected' ? 'مرفوض' : manuscript.paymentStatus}
+                    </Badge>
+                  </div>
+                  {manuscript.paymentAmount && (
+                    <div className="p-3 rounded-xl bg-accent/30">
+                      <span className="text-xs text-secondary/60">المبلغ</span>
+                      <p className="font-medium">{manuscript.paymentAmount} ل.س</p>
+                    </div>
+                  )}
+                  {manuscript.paymentImageUrl && (
+                    <a href={manuscript.paymentImageUrl} target="_blank" rel="noopener noreferrer">
+                      <img src={manuscript.paymentImageUrl} alt="إشعار الدفع" className="w-full rounded-xl border border-border cursor-pointer hover:opacity-90 transition-opacity" />
+                    </a>
+                  )}
+                  {manuscript.paymentNotes && (
+                    <div className="p-3 rounded-xl bg-accent/30">
+                      <span className="text-xs text-secondary/60">ملاحظات المراجعة</span>
+                      <p className="text-sm">{manuscript.paymentNotes}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {manuscript.timeline?.length > 0 && (
             <Card>
               <CardContent className="p-6">
