@@ -79,7 +79,8 @@ export default function ManuscriptPayment() {
     setSubmitting(true)
     setUploadProgress(10)
     try {
-      const filePath = `manuscript-payments/${user?.id}/${Date.now()}-${paymentFile.name}`
+      const safeName = paymentFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+      const filePath = `manuscript-payments/${user?.id}/${Date.now()}-${safeName}`
       const { error: uploadError } = await supabase.storage
         .from('payment-notifications')
         .upload(filePath, paymentFile)
