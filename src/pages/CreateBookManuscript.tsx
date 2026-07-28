@@ -55,7 +55,6 @@ interface FormData {
 const steps = [
   { label: 'معلومات الكتاب', icon: BookOpen },
   { label: 'رفع الملفات', icon: Upload },
-  { label: 'تحليل الملف', icon: FileText },
   { label: 'نوع الكتاب', icon: Layers },
   { label: 'الهوية البصرية', icon: Palette },
   { label: 'الصور الداخلية', icon: ImageIcon },
@@ -173,8 +172,8 @@ export default function CreateBookManuscript() {
       if (!form.authorName.trim()) { toast.error('أدخل اسم المؤلف'); return }
     }
     if (step === 1 && !form.manuscriptFile) { toast.error('يجب رفع ملف المخطوطة'); return }
-    if (step === 3 && !form.bookCategory) { toast.error('اختر نوع الكتاب'); return }
-    if (step === 4 && form.visualStyles.length === 0) { toast.error('اختر أسلوباً بصرياً واحداً على الأقل'); return }
+    if (step === 2 && !form.bookCategory) { toast.error('اختر نوع الكتاب'); return }
+    if (step === 3 && form.visualStyles.length === 0) { toast.error('اختر أسلوباً بصرياً واحداً على الأقل'); return }
     setStep((s) => Math.min(s + 1, steps.length - 1))
     window.scrollTo(0, 0)
   }
@@ -509,45 +508,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 2: File Analysis */}
+            {/* Step 2: Book Category */}
             {step === 2 && (
-              <div>
-                <h2 className="text-xl font-semibold text-secondary mb-6 flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary" />
-                  تحليل الملف
-                </h2>
-                {!fileAnalysis ? (
-                  <div className="flex flex-col items-center justify-center py-16">
-                    <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
-                    <p className="text-secondary font-medium">جاري تحليل الملف...</p>
-                    <p className="text-sm text-secondary/60 mt-1">قد يستغرق هذا بضع ثوانٍ</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <p className="text-sm text-secondary/60 mb-4">هذه المعلومات للمعاينة فقط</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      {[
-                        { label: 'عدد الكلمات', value: fileAnalysis.words.toLocaleString('ar-SA'), icon: '📝' },
-                        { label: 'عدد الصفحات التقريبي', value: fileAnalysis.pages.toLocaleString('ar-SA'), icon: '📄' },
-                        { label: 'عدد الفصول', value: fileAnalysis.chapters.toLocaleString('ar-SA'), icon: '📖' },
-                        { label: 'اللغة', value: fileAnalysis.language, icon: '🌐' },
-                        { label: 'يحتوي صوراً؟', value: fileAnalysis.hasImages ? 'نعم' : 'لا', icon: '🖼️' },
-                        { label: 'الوقت المتوقع', value: fileAnalysis.estimatedTime, icon: '⏱️' },
-                      ].map((item) => (
-                        <div key={item.label} className="p-4 rounded-xl bg-accent/30 text-center">
-                          <div className="text-2xl mb-2">{item.icon}</div>
-                          <div className="text-lg font-bold text-secondary">{item.value}</div>
-                          <div className="text-xs text-secondary/60 mt-1">{item.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Step 3: Book Category */}
-            {step === 3 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-6 flex items-center gap-2">
                   <Layers className="w-5 h-5 text-primary" />
@@ -569,8 +531,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 4: Visual Identity */}
-            {step === 4 && (
+            {/* Step 3: Visual Identity */}
+            {step === 3 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-2 flex items-center gap-2">
                   <Palette className="w-5 h-5 text-primary" />
@@ -594,8 +556,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 5: Internal Images */}
-            {step === 5 && (
+            {/* Step 4: Internal Images */}
+            {step === 4 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-6 flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-primary" />
@@ -623,8 +585,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 6: Page Layout */}
-            {step === 6 && (
+            {/* Step 5: Page Layout */}
+            {step === 5 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-6 flex items-center gap-2">
                   <Settings className="w-5 h-5 text-primary" />
@@ -653,8 +615,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 7: Additional Services */}
-            {step === 7 && (
+            {/* Step 6: Additional Services */}
+            {step === 6 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-6 flex items-center gap-2">
                   <Check className="w-5 h-5 text-primary" />
@@ -681,8 +643,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 8: Additional Notes */}
-            {step === 8 && (
+            {/* Step 7: Additional Notes */}
+            {step === 7 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-6 flex items-center gap-2">
                   <MessageSquare className="w-5 h-5 text-primary" />
@@ -698,8 +660,8 @@ export default function CreateBookManuscript() {
               </div>
             )}
 
-            {/* Step 9: Summary */}
-            {step === 9 && (
+            {/* Step 8: Summary */}
+            {step === 8 && (
               <div>
                 <h2 className="text-xl font-semibold text-secondary mb-6">ملخص الطلب</h2>
                 <div className="space-y-4">
