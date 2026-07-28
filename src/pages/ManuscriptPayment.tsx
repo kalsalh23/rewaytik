@@ -10,7 +10,7 @@ import { useAuthStore } from '@/store/auth'
 
 const shamCashInfo = {
   beneficiary: 'روايتك',
-  walletNumber: '0991234567',
+  walletNumber: '97ceb947e59e77ef55fdfa062f0afcaf',
 }
 
 export default function ManuscriptPayment() {
@@ -153,25 +153,8 @@ export default function ManuscriptPayment() {
               </div>
 
               <div className="flex items-center justify-center py-4">
-                <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center shadow-sm border border-border">
-                  <div className="text-center">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <span className="text-3xl font-bold tracking-widest text-primary" style={{ fontFamily: 'monospace' }}>
-                          {shamCashInfo.walletNumber.slice(0, 4)}
-                        </span>
-                        <div className="w-24 h-24 mx-auto mt-2 border-2 border-primary/20 rounded-lg flex items-center justify-center">
-                          <div className="w-20 h-20 bg-primary/10 rounded" style={{
-                            background: `repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(59,130,246,0.1) 2px, rgba(59,130,246,0.1) 4px)`
-                          }}>
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Wallet className="w-10 h-10 text-primary/40" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center shadow-sm border border-border overflow-hidden">
+                  <img src="/images/shamcash-qr.png" alt="QR Code شام كاش" className="w-full h-full object-contain p-2" />
                 </div>
               </div>
 

@@ -10,7 +10,7 @@ import { useAuthStore } from '@/store/auth'
 
 const shamCashInfo = {
   beneficiary: 'روايتك',
-  walletNumber: '0991234567',
+  walletNumber: '97ceb947e59e77ef55fdfa062f0afcaf',
 }
 
 export default function Payment() {

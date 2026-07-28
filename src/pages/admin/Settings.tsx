@@ -14,7 +14,7 @@ export default function AdminSettings() {
     email: 'info@riwayatek.com',
     phone: '+966 55 123 4567',
     address: 'حماه، الجمهورية العربية السورية',
-    shamCashWallet: '0991234567',
+    shamCashWallet: '97ceb947e59e77ef55fdfa062f0afcaf',
     shamCashBeneficiary: 'روايتك',
     shippingCost: 'مجاني',
   })
