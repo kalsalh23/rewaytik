@@ -582,6 +582,69 @@ export default function CreateBookManuscript() {
                     </button>
                   ))}
                 </div>
+
+                {form.internalImagesOption === 'upload' && (
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-secondary mb-2">اختر الصور الداخلية للكتاب</label>
+                    <div
+                      className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer"
+                      onClick={() => imagesInputRef.current?.click()}
+                      onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('border-primary', 'bg-primary/5') }}
+                      onDragLeave={(e) => { e.currentTarget.classList.remove('border-primary', 'bg-primary/5') }}
+                      onDrop={(e) => {
+                        e.preventDefault()
+                        e.currentTarget.classList.remove('border-primary', 'bg-primary/5')
+                        const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'))
+                        if (files.length > 0) {
+                          setForm((prev) => ({ ...prev, additionalImages: [...prev.additionalImages, ...files] }))
+                          toast.success(`تم إضافة ${files.length} صورة`)
+                        }
+                      }}
+                    >
+                      <ImageIcon className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-secondary/60">اختر الصور من جهازك أو اسحبها هنا</p>
+                      <p className="text-xs text-muted-foreground mt-1">PNG, JPG, JPEG</p>
+                    </div>
+                    <input
+                      ref={imagesInputRef}
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg"
+                      multiple
+                      className="hidden"
+                      onChange={(e) => {
+                        const files = e.target.files
+                        if (files && files.length > 0) {
+                          const newImages = Array.from(files).filter(f => f.type.startsWith('image/'))
+                          if (newImages.length > 0) {
+                            setForm((prev) => ({ ...prev, additionalImages: [...prev.additionalImages, ...newImages] }))
+                            toast.success(`تم إضافة ${newImages.length} صورة`)
+                          }
+                        }
+                        e.target.value = ''
+                      }}
+                    />
+                    {form.additionalImages.length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        {form.additionalImages.map((img, i) => (
+                          <div key={i} className="relative group">
+                            <img
+                              src={URL.createObjectURL(img)}
+                              alt={img.name}
+                              className="w-20 h-20 object-cover rounded-xl border-2 border-border"
+                            />
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setForm((prev) => ({ ...prev, additionalImages: prev.additionalImages.filter((_, idx) => idx !== i) })) }}
+                              className="absolute -top-2 -left-2 w-5 h-5 bg-error text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                            <p className="text-xs text-secondary/60 mt-1 truncate max-w-[80px]">{img.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
