@@ -82,8 +82,8 @@ export default function FullHome() {
               <div className="relative w-full max-w-lg">
                 <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl blur-2xl" />
                 <img
-                  src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&q=80"
-                  alt="كتاب فاخر"
+                  src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=600&q=80"
+                  alt="أنجز - خدمات الكتابة والخدمات الأكاديمية"
                   className="relative rounded-2xl shadow-2xl w-full h-auto object-cover aspect-[4/3]"
                 />
               </div>
@@ -208,7 +208,7 @@ export default function FullHome() {
                 <div className="relative w-full max-w-md">
                   <div className="absolute -inset-4 bg-gradient-to-br from-accent/20 to-accent/5 rounded-3xl blur-2xl" />
                   <img
-                    src="https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=80"
+                    src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&q=80"
                     alt="اصنع كتابك"
                     className="relative rounded-2xl shadow-2xl w-full h-auto object-cover aspect-[4/3]"
                   />
