@@ -55,10 +55,13 @@ export default function CreateResearchCircle() {
   const removeFile = (index: number) => setFiles(prev => prev.filter((_, i) => i !== index))
 
   const handleSubmit = async () => {
-    if (!form.researchTitle || !form.university || !form.faculty) {
-      toast.error('يرجى ملء جميع الحقول المطلوبة')
-      return
-    }
+    if (!form.researchTitle) { toast.error('يرجى إدخال عنوان البحث'); return }
+    if (!form.university) { toast.error('يرجى إدخال اسم الجامعة'); return }
+    if (!form.faculty) { toast.error('يرجى إدخال اسم الكلية'); return }
+    if (!form.department) { toast.error('يرجى إدخال القسم'); return }
+    if (!form.researchType) { toast.error('يرجى اختيار نوع البحث'); return }
+    if (!form.deliveryDate) { toast.error('يرجى تحديد تاريخ التسليم'); return }
+    if (files.length === 0) { toast.error('يرجى رفع ملف واحد على الأقل'); return }
     setLoading(true)
     try {
       const fileUrls: any[] = []
@@ -108,7 +111,14 @@ export default function CreateResearchCircle() {
       toast.success('تم إنشاء الطلب بنجاح!')
       navigate('/my-academic-orders')
     } catch (e: any) {
-      toast.error(e?.message || 'حدث خطأ')
+      const msg = e?.message || ''
+      if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {
+        toast.error('خطأ في قاعدة البيانات. يرجى التأكد من تنفيذ ملف الترحيل SQL')
+      } else if (msg.includes('policy') || msg.includes('row-level security')) {
+        toast.error('خطأ في الصلاحيات')
+      } else {
+        toast.error(msg || 'حدث خطأ')
+      }
     } finally {
       setLoading(false)
     }

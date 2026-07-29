@@ -98,7 +98,14 @@ export default function CreatePresentation() {
       toast.success('تم إنشاء الطلب بنجاح!')
       navigate('/my-academic-orders')
     } catch (e: any) {
-      toast.error(e?.message || 'حدث خطأ')
+      const msg = e?.message || ''
+      if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {
+        toast.error('خطأ في قاعدة البيانات. يرجى التأكد من تنفيذ ملف الترحيل SQL')
+      } else if (msg.includes('policy') || msg.includes('row-level security')) {
+        toast.error('خطأ في الصلاحيات')
+      } else {
+        toast.error(msg || 'حدث خطأ')
+      }
     } finally {
       setLoading(false)
     }

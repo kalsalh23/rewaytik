@@ -52,10 +52,11 @@ export default function CreateGraduationProject() {
   const removeFile = (index: number) => setFiles(prev => prev.filter((_, i) => i !== index))
 
   const handleSubmit = async () => {
-    if (!form.projectTitle || !form.university || !form.faculty) {
-      toast.error('يرجى ملء جميع الحقول المطلوبة')
-      return
-    }
+    if (!form.projectTitle) { toast.error('يرجى إدخال عنوان المشروع'); return }
+    if (!form.university) { toast.error('يرجى إدخال اسم الجامعة'); return }
+    if (!form.faculty) { toast.error('يرجى إدخال اسم الكلية'); return }
+    if (form.requiredSections.length === 0) { toast.error('يرجى اختيار قسم مطلوب واحد على الأقل'); return }
+    if (files.length === 0) { toast.error('يرجى رفع ملف واحد على الأقل'); return }
     setLoading(true)
     try {
       const fileUrls: any[] = []
@@ -99,7 +100,14 @@ export default function CreateGraduationProject() {
       toast.success('تم إنشاء الطلب بنجاح!')
       navigate('/my-academic-orders')
     } catch (e: any) {
-      toast.error(e?.message || 'حدث خطأ')
+      const msg = e?.message || ''
+      if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {
+        toast.error('خطأ في قاعدة البيانات. يرجى التأكد من تنفيذ ملف الترحيل SQL')
+      } else if (msg.includes('policy') || msg.includes('row-level security')) {
+        toast.error('خطأ في الصلاحيات')
+      } else {
+        toast.error(msg || 'حدث خطأ')
+      }
     } finally {
       setLoading(false)
     }

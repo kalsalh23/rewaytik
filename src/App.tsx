@@ -41,6 +41,8 @@ import AdminManuscripts from '@/pages/admin/Manuscripts'
 import AdminManuscriptDetail from '@/pages/admin/ManuscriptDetail'
 import AdminPaymentNotifications from '@/pages/admin/PaymentNotifications'
 import AdminInquiries from '@/pages/admin/Inquiries'
+import AdminAcademicOrders from '@/pages/admin/AcademicOrders'
+import AdminAcademicOrderDetail from '@/pages/admin/AcademicOrderDetail'
 import AcademicServices from '@/pages/AcademicServices'
 import CreateGraduationProject from '@/pages/CreateGraduationProject'
 import CreatePresentation from '@/pages/CreatePresentation'
@@ -129,6 +131,8 @@ function App() {
               <Route path="/admin/gallery" element={<AdminGallery />} />
               <Route path="/admin/manuscripts" element={<AdminManuscripts />} />
               <Route path="/admin/manuscripts/:id" element={<AdminManuscriptDetail />} />
+              <Route path="/admin/academic-orders" element={<AdminAcademicOrders />} />
+              <Route path="/admin/academic-order/:type/:id" element={<AdminAcademicOrderDetail />} />
             </Route>
           </Route>
 
