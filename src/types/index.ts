@@ -247,3 +247,200 @@ export interface CreateManuscriptOrderInput {
   order_number: string
   timeline: ManuscriptTimeline[]
 }
+
+// ==================== ACADEMIC SERVICES ====================
+
+export type AcademicServiceType = 'graduation_project' | 'presentation' | 'academic_task' | 'research_circle'
+
+export type AcademicOrderStatus =
+  | 'new'
+  | 'under_review'
+  | 'in_progress'
+  | 'awaiting_client'
+  | 'revision'
+  | 'ready'
+  | 'delivered'
+  | 'cancelled'
+
+export type AcademicPaymentStatus = 'pending' | 'reviewing' | 'approved' | 'rejected'
+
+// --- Graduation Project ---
+
+export interface GraduationProjectOrder {
+  id: string
+  orderNumber: string
+  userId: string
+  status: AcademicOrderStatus
+  paymentStatus: AcademicPaymentStatus
+  paymentAmount: number
+  paymentImageUrl: string
+  walletNumber: string
+  projectTitle: string
+  university: string
+  faculty: string
+  department: string
+  supervisorName: string
+  language: string
+  deadline: string
+  projectIdea: string
+  projectGoal: string
+  problem: string
+  expectedResults: string
+  requiredSections: string[]
+  uploadedFiles: AcademicFile[]
+  pageCount: string
+  fontStyle: string
+  fontSize: string
+  citationStyle: string
+  hasImages: boolean
+  hasTables: boolean
+  additionalServices: string[]
+  additionalNotes: string
+  internalNotes: string
+  finalFileUrl: string
+  timeline: AcademicTimeline[]
+  isArchived: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// --- Presentation ---
+
+export interface PresentationOrder {
+  id: string
+  orderNumber: string
+  userId: string
+  status: AcademicOrderStatus
+  paymentStatus: AcademicPaymentStatus
+  paymentAmount: number
+  paymentImageUrl: string
+  walletNumber: string
+  projectTitle: string
+  slideCount: number
+  language: string
+  visualIdentity: string
+  uploadedFiles: AcademicFile[]
+  universityLogoUrl: string
+  customColors: string[]
+  hasCharts: boolean
+  hasIcons: boolean
+  hasTransitions: boolean
+  additionalNotes: string
+  internalNotes: string
+  finalFileUrl: string
+  timeline: AcademicTimeline[]
+  isArchived: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// --- Academic Task ---
+
+export interface AcademicTaskOrder {
+  id: string
+  orderNumber: string
+  userId: string
+  status: AcademicOrderStatus
+  paymentStatus: AcademicPaymentStatus
+  paymentAmount: number
+  paymentImageUrl: string
+  walletNumber: string
+  courseName: string
+  university: string
+  major: string
+  taskType: string
+  taskDescription: string
+  instructions: string
+  requirements: string
+  uploadedFiles: AcademicFile[]
+  language: string
+  wordCount: string
+  pageCount: string
+  citationStyle: string
+  additionalServices: string[]
+  additionalNotes: string
+  internalNotes: string
+  finalFileUrl: string
+  timeline: AcademicTimeline[]
+  isArchived: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// --- Research Circle ---
+
+export interface ResearchCircleOrder {
+  id: string
+  orderNumber: string
+  userId: string
+  status: AcademicOrderStatus
+  paymentStatus: AcademicPaymentStatus
+  paymentAmount: number
+  paymentImageUrl: string
+  walletNumber: string
+  researchTitle: string
+  university: string
+  faculty: string
+  department: string
+  courseName: string
+  supervisorName: string
+  researchType: string
+  topic: string
+  objectives: string
+  description: string
+  instructions: string
+  keywords: string
+  uploadedFiles: AcademicFile[]
+  language: string
+  pageCount: string
+  wordCount: string
+  fontStyle: string
+  fontSize: string
+  citationStyle: string
+  minReferences: string
+  hasTables: boolean
+  hasImages: boolean
+  additionalServices: string[]
+  additionalNotes: string
+  internalNotes: string
+  finalFileUrl: string
+  deliveryDate: string
+  deliveryTime: string
+  priority: 'normal' | 'urgent'
+  timeline: AcademicTimeline[]
+  isArchived: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+// --- Shared Academic Types ---
+
+export interface AcademicFile {
+  id: string
+  fileUrl: string
+  fileName: string
+  fileSize: number
+  fileType: string
+  category: 'client' | 'execution' | 'delivery'
+  createdAt: string
+}
+
+export interface AcademicTimeline {
+  status: AcademicOrderStatus
+  date: string
+  note?: string
+}
+
+export interface AcademicAttachment {
+  id: string
+  orderId: string
+  serviceType: AcademicServiceType
+  fileUrl: string
+  fileName: string
+  fileSize: number
+  fileType: string
+  category: 'client' | 'execution' | 'delivery'
+  createdAt: string
+}
+
+export type ServiceCategory = 'creative_studio' | 'academic_studio'

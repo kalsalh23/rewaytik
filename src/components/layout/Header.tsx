@@ -11,6 +11,7 @@ const browseNavLinks = [
   { path: '/how-it-works', label: 'كيف يعمل' },
   { path: '/create-order', label: 'طلب كتاب فوري' },
   { path: '/create-manuscript', label: '📚 اصنع كتابك' },
+  { path: '/academic-services', label: '🎓 الخدمات الأكاديمية' },
   { path: '/gallery', label: 'معرض الأعمال' },
   { path: '/pricing', label: 'الأسعار' },
   { path: '/faq', label: 'الأسئلة الشائعة' },
@@ -50,7 +51,7 @@ export function Header() {
             <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
               <BookOpen className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-secondary">روايتك</span>
+            <span className="text-xl font-bold text-secondary">أنجز</span>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">

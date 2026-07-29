@@ -9,13 +9,13 @@ import { supabase } from '@/lib/supabase'
 export default function AdminSettings() {
   const [loading, setLoading] = useState(false)
   const [settings, setSettings] = useState({
-    siteName: 'روايتك',
+    siteName: 'أنجز',
     siteDescription: 'لأن لكل إنسان قصة تستحق أن تُروى',
     email: 'info@riwayatek.com',
     phone: '+966 55 123 4567',
     address: 'حماه، الجمهورية العربية السورية',
     shamCashWallet: '97ceb947e59e77ef55fdfa062f0afcaf',
-    shamCashBeneficiary: 'روايتك',
+    shamCashBeneficiary: 'أنجز',
     shippingCost: 'مجاني',
   })
 

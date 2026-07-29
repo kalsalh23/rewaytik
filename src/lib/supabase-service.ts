@@ -456,3 +456,164 @@ function mapManuscriptOrder(data: any) {
 function mapManuscriptOrderDetail(data: any) {
   return mapManuscriptOrder(data)
 }
+
+// ==================== ACADEMIC SERVICES ====================
+
+const ACADEMIC_TABLES = {
+  graduation_project: 'graduation_projects',
+  presentation: 'presentations',
+  academic_task: 'academic_tasks',
+  research_circle: 'research_circles',
+} as const
+
+function generateOrderNumber(prefix: string) {
+  const date = new Date()
+  const y = date.getFullYear().toString().slice(-2)
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  const rand = Math.floor(Math.random() * 10000).toString().padStart(4, '0')
+  return `${prefix}-${y}${m}${d}-${rand}`
+}
+
+export async function createAcademicOrder(serviceType: string, order: any) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const prefixes: Record<string, string> = {
+    graduation_project: 'GP',
+    presentation: 'PR',
+    academic_task: 'AT',
+    research_circle: 'RC',
+  }
+  const orderNumber = generateOrderNumber(prefixes[serviceType] || 'AC')
+  const { data, error } = await supabase.from(table)
+    .insert({ ...order, user_id: user.id, order_number: orderNumber }).select().single()
+  if (error) throw error
+  return data
+}
+
+export async function getMyAcademicOrders(serviceType: string) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Not authenticated')
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { data, error } = await supabase.from(table)
+    .select('*').eq('user_id', user.id).eq('is_archived', false)
+    .order('created_at', { ascending: false })
+  if (error) throw error
+  return data || []
+}
+
+export async function getAllAcademicOrders(serviceType: string, params?: { fromDate?: string; toDate?: string }) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  let query = supabase.from(table).select('*, users(name)').eq('is_archived', false).order('created_at', { ascending: false })
+  if (params?.fromDate) query = query.gte('created_at', params.fromDate)
+  if (params?.toDate) query = query.lte('created_at', params.toDate)
+  const { data, error } = await query
+  if (error) throw error
+  return data || []
+}
+
+export async function getAcademicOrder(serviceType: string, id: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { data, error } = await supabase.from(table).select('*').eq('id', id).single()
+  if (error) throw error
+  const { data: attachments } = await supabase.from('academic_attachments')
+    .select('*').eq('order_id', id).order('created_at', { ascending: true })
+  return { ...data, attachments: attachments || [] }
+}
+
+export async function updateAcademicOrderStatus(serviceType: string, id: string, status: string, note?: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { data: existing } = await supabase.from(table).select('timeline').eq('id', id).single()
+  const timeline = [...(existing?.timeline || []), { status, date: new Date().toISOString(), note }]
+  const { error } = await supabase.from(table)
+    .update({ status, timeline, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw error
+}
+
+export async function updateAcademicPaymentStatus(serviceType: string, id: string, paymentStatus: string, note?: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { data: existing } = await supabase.from(table).select('timeline').eq('id', id).single()
+  const timeline = [...(existing?.timeline || []), { status: `payment_${paymentStatus}`, date: new Date().toISOString(), note }]
+  const updates: any = { payment_status: paymentStatus, timeline, updated_at: new Date().toISOString() }
+  if (paymentStatus === 'approved') updates.status = 'under_review'
+  const { error } = await supabase.from(table).update(updates).eq('id', id)
+  if (error) throw error
+}
+
+export async function updateAcademicInternalNotes(serviceType: string, id: string, internalNotes: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { error } = await supabase.from(table)
+    .update({ internal_notes: internalNotes, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw error
+}
+
+export async function uploadAcademicFinalFile(serviceType: string, id: string, file: File, userId: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const filePath = `academic/${serviceType}/${userId}/${Date.now()}-${file.name}`
+  const { error: uploadError } = await supabase.storage.from('academic-final').upload(filePath, file)
+  if (uploadError) throw uploadError
+  const { data: { publicUrl } } = supabase.storage.from('academic-final').getPublicUrl(filePath)
+  const { error } = await supabase.from(table)
+    .update({ final_file_url: publicUrl, updated_at: new Date().toISOString() }).eq('id', id)
+  if (error) throw error
+  return publicUrl
+}
+
+export async function archiveAcademicOrder(serviceType: string, id: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { error } = await supabase.from(table).update({ is_archived: true }).eq('id', id)
+  if (error) throw error
+}
+
+export async function uploadAcademicFile(serviceType: string, orderId: string, file: File, userId: string, category: string = 'client') {
+  const filePath = `academic/${serviceType}/${userId}/${Date.now()}-${file.name}`
+  const { error: uploadError } = await supabase.storage.from('academic-uploads').upload(filePath, file)
+  if (uploadError) throw uploadError
+  const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
+  const { data, error } = await supabase.from('academic_attachments').insert({
+    order_id: orderId,
+    service_type: serviceType,
+    file_url: publicUrl,
+    file_name: file.name,
+    file_size: file.size,
+    file_type: file.type,
+    category,
+  }).select().single()
+  if (error) throw error
+  return data
+}
+
+export async function getAcademicStats() {
+  const results: Record<string, { total: number; newCount: number; inProgress: number; completed: number }> = {}
+  for (const [type, table] of Object.entries(ACADEMIC_TABLES)) {
+    const { data: all } = await supabase.from(table).select('id, status')
+    const total = all?.length || 0
+    const newCount = (all || []).filter((o: any) => o.status === 'new').length
+    const inProgress = (all || []).filter((o: any) => !['delivered', 'cancelled'].includes(o.status)).length
+    const completed = (all || []).filter((o: any) => o.status === 'delivered').length
+    results[type] = { total, newCount, inProgress, completed }
+  }
+  return results
+}
+
+export async function updateAcademicPayment(serviceType: string, id: string, paymentImageUrl: string, walletNumber: string) {
+  const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
+  if (!table) throw new Error('Invalid service type')
+  const { error } = await supabase.from(table).update({
+    payment_image_url: paymentImageUrl,
+    wallet_number: walletNumber,
+    payment_status: 'reviewing',
+    updated_at: new Date().toISOString(),
+  }).eq('id', id)
+  if (error) throw error
+}

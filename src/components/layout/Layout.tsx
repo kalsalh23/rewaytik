@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth'
-import { BookOpen, LayoutDashboard, ShoppingBag, Users, BarChart3, Settings, Image as ImageIcon, Bell, MessageSquare, ArrowLeft, FileText } from 'lucide-react'
+import { BookOpen, LayoutDashboard, ShoppingBag, Users, BarChart3, Settings, Image as ImageIcon, Bell, MessageSquare, ArrowLeft, FileText, GraduationCap, Presentation, BookMarked, FlaskConical } from 'lucide-react'
 import { Header } from './Header'
 import { Footer } from './Footer'
 
@@ -22,8 +22,12 @@ export function AdminLayout() {
 
   const sidebarLinks = [
     { path: '/admin', label: 'الإحصائيات', icon: LayoutDashboard },
-    { path: '/admin/orders', label: 'الطلبات', icon: ShoppingBag },
+    { path: '/admin/orders', label: 'طلبات الروايات', icon: ShoppingBag },
     { path: '/admin/manuscripts', label: 'طلبات اصنع كتابك', icon: FileText },
+    { path: '/admin/graduation-projects', label: 'مشاريع التخرج', icon: GraduationCap },
+    { path: '/admin/presentations', label: 'العروض التقديمية', icon: Presentation },
+    { path: '/admin/academic-tasks', label: 'الخدمات الأكاديمية', icon: BookMarked },
+    { path: '/admin/research-circles', label: 'حلقات البحث', icon: FlaskConical },
     { path: '/admin/customers', label: 'العملاء', icon: Users },
     { path: '/admin/reports', label: 'التقارير', icon: BarChart3 },
     { path: '/admin/inquiries', label: 'الاستفسارات', icon: MessageSquare },
@@ -39,7 +43,7 @@ export function AdminLayout() {
           <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center">
             <BookOpen className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold">روايتك</span>
+          <span className="font-bold">أنجز</span>
         </Link>
         <nav className="flex-1 p-4 space-y-1">
           {sidebarLinks.map((link) => {

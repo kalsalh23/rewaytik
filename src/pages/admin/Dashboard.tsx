@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react'
-import { ShoppingBag, Users, DollarSign, Package, TrendingUp, TrendingDown, Loader2, FileText } from 'lucide-react'
+import { ShoppingBag, Users, DollarSign, Package, TrendingUp, TrendingDown, Loader2, FileText, GraduationCap, Presentation, BookMarked, FlaskConical } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
-import { getDashboardStats, getManuscriptStats } from '@/lib/supabase-service'
+import { getDashboardStats, getManuscriptStats, getAcademicStats } from '@/lib/supabase-service'
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null)
   const [manuscriptStats, setManuscriptStats] = useState<any>(null)
+  const [academicStats, setAcademicStats] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
       getDashboardStats().catch(() => null),
       getManuscriptStats().catch(() => null),
-    ]).then(([orderData, msData]) => {
+      getAcademicStats().catch(() => null),
+    ]).then(([orderData, msData, acData]) => {
       setStats(orderData)
       setManuscriptStats(msData)
+      setAcademicStats(acData)
       setLoading(false)
     })
   }, [])
@@ -37,16 +40,17 @@ export default function AdminDashboard() {
     { title: 'الإيرادات', value: `${stats.totalRevenue.toLocaleString('ar-SA')} ل.س`, icon: DollarSign, color: 'from-primary/10 to-primary/5' },
     { title: 'بانتظار المراجعة', value: stats.pendingReview, icon: Package, color: 'from-accent/10 to-accent/5' },
     { title: 'طلبات المخطوطات', value: manuscriptStats?.total || 0, icon: FileText, color: 'from-info/10 to-info/5' },
-    { title: 'مخطوطات جديدة', value: manuscriptStats?.newCount || 0, icon: FileText, color: 'from-warning/10 to-warning/5' },
-    { title: 'مخطوطات قيد التنفيذ', value: manuscriptStats?.inProgress || 0, icon: FileText, color: 'from-primary/10 to-primary/5' },
-    { title: 'مخطوطات مكتملة', value: manuscriptStats?.completed || 0, icon: FileText, color: 'from-success/10 to-success/5' },
+    { title: 'مشاريع التخرج', value: academicStats?.graduation_project?.total || 0, icon: GraduationCap, color: 'from-success/10 to-success/5' },
+    { title: 'العروض التقديمية', value: academicStats?.presentation?.total || 0, icon: Presentation, color: 'from-warning/10 to-warning/5' },
+    { title: 'الخدمات الأكاديمية', value: academicStats?.academic_task?.total || 0, icon: BookMarked, color: 'from-primary/10 to-primary/5' },
+    { title: 'حلقات البحث', value: academicStats?.research_circle?.total || 0, icon: FlaskConical, color: 'from-accent/10 to-accent/5' },
   ]
 
   return (
     <div>
       <h2 className="text-2xl font-bold text-secondary mb-6">نظرة عامة</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         {cards.map((card) => {
           const Icon = card.icon
           return (

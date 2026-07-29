@@ -41,6 +41,12 @@ import AdminManuscripts from '@/pages/admin/Manuscripts'
 import AdminManuscriptDetail from '@/pages/admin/ManuscriptDetail'
 import AdminPaymentNotifications from '@/pages/admin/PaymentNotifications'
 import AdminInquiries from '@/pages/admin/Inquiries'
+import AcademicServices from '@/pages/AcademicServices'
+import CreateGraduationProject from '@/pages/CreateGraduationProject'
+import CreatePresentation from '@/pages/CreatePresentation'
+import CreateAcademicTask from '@/pages/CreateAcademicTask'
+import CreateResearchCircle from '@/pages/CreateResearchCircle'
+import MyAcademicOrders from '@/pages/MyAcademicOrders'
 
 const queryClient = new QueryClient()
 
@@ -84,6 +90,7 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/shipping" element={<ShippingPolicy />} />
+            <Route path="/academic-services" element={<AcademicServices />} />
           </Route>
 
           {/* Action pages (require login) */}
@@ -100,6 +107,11 @@ function App() {
               <Route path="/manuscript/:id" element={<ManuscriptDetail />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/create-graduation-project" element={<CreateGraduationProject />} />
+              <Route path="/create-presentation" element={<CreatePresentation />} />
+              <Route path="/create-academic-task" element={<CreateAcademicTask />} />
+              <Route path="/create-research-circle" element={<CreateResearchCircle />} />
+              <Route path="/my-academic-orders" element={<MyAcademicOrders />} />
             </Route>
           </Route>
 

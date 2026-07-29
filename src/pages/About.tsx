@@ -27,10 +27,10 @@ export default function About() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
           <div>
-            <h2 className="text-3xl font-bold text-secondary mb-6">قصة روايتك</h2>
+            <h2 className="text-3xl font-bold text-secondary mb-6">قصة أنجز</h2>
             <div className="space-y-4 text-secondary/70 leading-relaxed">
               <p>
-                انطلقت فكرة "روايتك" من إيمان عميق بأن لكل إنسان قصة تستحق أن تُروى وتخلد في كتاب. في عالم سريع يطغى عليه الرقمي، أردنا أن نعيد للذكريات قيمتها الملموسة.
+                انطلقت فكرة "أنجز" من إيمان عميق بأن لكل إنسان قصة تستحق أن تُروى وتخلد في كتاب. في عالم سريع يطغى عليه الرقمي، أردنا أن نعيد للذكريات قيمتها الملموسة.
               </p>
               <p>
                 نحن فريق من الكتاب والمصممين والناشرين المحترفين، نجتمع على شغف واحد: تحويل اللحظات الثمينة والقصص الملهمة إلى كتب مطبوعة فاخرة تبقى للأبد.

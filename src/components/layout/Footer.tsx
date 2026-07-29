@@ -6,6 +6,7 @@ const footerLinks = {
     { path: '/', label: 'الرئيسية' },
     { path: '/how-it-works', label: 'كيف يعمل' },
     { path: '/create-order', label: 'طلب كتاب فوري' },
+    { path: '/academic-services', label: 'الخدمات الأكاديمية' },
     { path: '/pricing', label: 'الأسعار' },
     { path: '/gallery', label: 'معرض الأعمال' },
   ],
@@ -29,10 +30,10 @@ export function Footer() {
               <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold">روايتك</span>
+              <span className="text-xl font-bold">أنجز</span>
             </Link>
             <p className="text-white/60 text-sm leading-relaxed mb-6">
-              لأن لكل إنسان قصة تستحق أن تُروى. نحول ذكرياتك وأجمل لحظات حياتك إلى كتاب مطبوع فاخر يبقى للأبد.
+              أنجز... كل ما تحتاجه من خدمات الكتابة والتصميم في مكان واحد. نحول أفكارك إلى واقع باحترافية.
             </p>
             <div className="flex items-center gap-3">
               <a href="https://www.instagram.com/riwaytak_vip/" target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-lg bg-white/10 hover:bg-primary/20 flex items-center justify-center transition-colors">
@@ -87,7 +88,7 @@ export function Footer() {
 
       <div className="border-t border-white/10">
         <div className="container-custom py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-white/40 text-sm">© {new Date().getFullYear()} روايتك. جميع الحقوق محفوظة.</p>
+          <p className="text-white/40 text-sm">© {new Date().getFullYear()} أنجز. جميع الحقوق محفوظة.</p>
           <div className="flex items-center gap-4 text-white/40 text-sm">
             <Link to="/privacy" className="hover:text-primary transition-colors">سياسة الخصوصية</Link>
             <Link to="/terms" className="hover:text-primary transition-colors">الشروط والأحكام</Link>

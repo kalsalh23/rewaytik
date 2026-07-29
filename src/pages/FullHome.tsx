@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowLeft, BookOpen, Star, Shield, Heart, Camera, Sparkles, ChevronLeft, ChevronRight, FileText } from 'lucide-react'
+import { ArrowLeft, BookOpen, Star, Shield, Heart, Camera, Sparkles, ChevronLeft, ChevronRight, FileText, GraduationCap, Presentation, BookMarked, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
@@ -33,7 +33,7 @@ const testimonials = [
   },
   {
     name: 'نورة السعد', role: 'عميلة',
-    text: 'سيرة والدي المهنية أصبحت كتاباً ملهماً. شكراً روايتك على هذا العمل الرائع.',
+    text: 'سيرة والدي المهنية أصبحت كتاباً ملهماً. شكراً أنجز على هذا العمل الرائع.',
     rating: 5,
   },
 ]
@@ -53,20 +53,20 @@ export default function FullHome() {
             <div className="text-center lg:text-right order-2 lg:order-1">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
                 <Sparkles className="w-4 h-4" />
-                حول قصتك إلى كتاب فاخر
+                كل ما تحتاجه من خدمات الكتابة والتصميم
               </span>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-secondary leading-tight mb-6">
-                لأن لكل إنسان
+                أنجز...
                 <br />
-                <span className="gradient-primary bg-clip-text text-transparent">قصة تستحق أن تُروى</span>
+                <span className="gradient-primary bg-clip-text text-transparent">كل ما تحتاجه في مكان واحد</span>
               </h1>
               <p className="text-lg text-secondary-light max-w-xl mb-10 leading-relaxed lg:mx-0 mx-auto">
-                منصة متكاملة لتحويل قصصك وذكرياتك إلى كتب مطبوعة فاخرة. اختر نوع قصتك، أضف التفاصيل والصور، ونحن نصنع لك كتاباً يبقى للأبد.
+                منصة متكاملة لإنجاز الكتب والروايات والمشاريع الأكاديمية والعروض التقديمية باحترافية. اختر الخدمة التي تحتاجها وابدأ الآن.
               </p>
               <div className="flex items-center justify-center lg:justify-start gap-4 flex-wrap">
-                <Link to="/create-order">
+                <Link to="/academic-services">
                   <Button size="lg" className="shadow-lg shadow-primary/25">
-                    ابدأ قصتك الآن
+                    ابدأ الآن
                     <ArrowLeft className="w-5 h-5 mr-2" />
                   </Button>
                 </Link>
@@ -134,9 +134,44 @@ export default function FullHome() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Academic Services */}
+      <section className="py-20 bg-primary/5">
+        <div className="container-custom">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">الخدمات الأكاديمية</h2>
+            <p className="text-secondary-light max-w-xl mx-auto">خدمات متكاملة لمساعدتك في إنجاز مشاريعك وواجباتك الجامعية</p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: 'مشروع تخرج', desc: 'إعداد ملفات مشاريع التخرج بجميع مكوناتها', icon: GraduationCap, color: 'from-primary/20 to-primary/5', path: '/create-graduation-project' },
+              { title: 'عرض تقديمي', desc: 'تصميم عروض PowerPoint احترافية', icon: Presentation, color: 'from-accent/20 to-accent/5', path: '/create-presentation' },
+              { title: 'خدمات أكاديمية', desc: 'مساعدة في إعداد الوظائف الجامعية', icon: BookMarked, color: 'from-info/20 to-info/5', path: '/create-academic-task' },
+              { title: 'حلقات البحث', desc: 'إعداد وتنسيق الأبحاث الأكاديمية', icon: FlaskConical, color: 'from-success/20 to-success/5', path: '/create-research-circle' },
+            ].map((service) => {
+              const Icon = service.icon
+              return (
+                <div key={service.title}>
+                  <Link to={service.path}>
+                    <Card className="group hover:shadow-card-hover cursor-pointer h-full">
+                      <CardContent className="p-6 text-center">
+                        <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.color} flex items-center justify-center mx-auto mb-4`}>
+                          <Icon className="w-7 h-7 text-secondary" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-secondary mb-2">{service.title}</h3>
+                        <p className="text-sm text-secondary-light leading-relaxed">{service.desc}</p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </div>
+              )
+            })}
+          </div>
           <div className="text-center mt-10">
-            <Link to="/create-order">
-              <Button variant="outline" size="lg">ابدأ كتابتك الآن <ArrowLeft className="w-5 h-5 mr-2" /></Button>
+            <Link to="/academic-services">
+              <Button variant="outline" size="lg">جميع الخدمات الأكاديمية <ArrowLeft className="w-5 h-5 mr-2" /></Button>
             </Link>
           </div>
         </div>
@@ -188,7 +223,7 @@ export default function FullHome() {
       <section className="py-20 bg-primary/5">
         <div className="container-custom">
           <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">كيف تعمل روايتك؟</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">كيف تعمل أنجز؟</h2>
             <p className="text-secondary-light max-w-xl mx-auto">ثلاث خطوات بسيطة لتحويل قصتك إلى كتاب فاخر</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -251,7 +286,7 @@ export default function FullHome() {
       <section className="py-20 bg-primary/5">
         <div className="container-custom">
           <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">لماذا تختار روايتك؟</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary mb-4">لماذا تختار أنجز؟</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -286,9 +321,9 @@ export default function FullHome() {
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">ابدأ قصتك الآن</h2>
-              <p className="text-white/80 max-w-lg mx-auto mb-8">كل لحظة في حياتك تستحق أن تخلد. حول ذكرياتك إلى كتاب فاخر يبقى للأبد.</p>
-              <Link to="/create-order">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">ابدأ الآن</h2>
+              <p className="text-white/80 max-w-lg mx-auto mb-8">كل ما تحتاجه من خدمات الكتابة والتصميم في مكان واحد. أنجز... بسهولة واحترافية.</p>
+              <Link to="/academic-services">
                 <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-lg">
                   ابدأ الآن <ArrowLeft className="w-5 h-5 mr-2" />
                 </Button>

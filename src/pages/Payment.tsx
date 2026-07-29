@@ -9,7 +9,7 @@ import { updatePaymentNotification } from '@/lib/supabase-service'
 import { useAuthStore } from '@/store/auth'
 
 const shamCashInfo = {
-  beneficiary: 'روايتك',
+  beneficiary: 'أنجز',
   walletNumber: '97ceb947e59e77ef55fdfa062f0afcaf',
 }
 

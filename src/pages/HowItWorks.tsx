@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { BookOpen, ClipboardCheck, Camera, FileText, Printer, Truck, Heart, ArrowLeft } from 'lucide-react'
+import { BookOpen, ClipboardCheck, Camera, FileText, Printer, Truck, Heart, ArrowLeft, GraduationCap, Presentation, BookMarked, FlaskConical } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useAuthStore } from '@/store/auth'
 
@@ -31,7 +31,7 @@ const steps = [
   {
     icon: Heart,
     title: 'الدفع عبر شام كاش',
-    desc: 'قم بالدفع عبر محفظة شام كاش. اسم المستفيد: روايتك. رقم المحفظة: 97ceb947e59e77ef55fdfa062f0afcaf.',
+    desc: 'قم بالدفع عبر محفظة شام كاش. اسم المستفيد: أنجز. رقم المحفظة: 97ceb947e59e77ef55fdfa062f0afcaf.',
     color: 'from-accent/10 to-accent/5',
   },
   {
@@ -112,6 +112,45 @@ export default function HowItWorks() {
         <div className="text-center mt-12">
           <Button size="lg" onClick={handleAction}>
               ابدأ قصتك الآن
+              <ArrowLeft className="w-5 h-5 mr-2" />
+            </Button>
+        </div>
+      </div>
+
+      {/* Academic Services */}
+      <div className="container-custom mt-20">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-secondary mb-4">الخدمات الأكاديمية</h1>
+          <p className="text-secondary/60 max-w-2xl mx-auto text-lg">
+            خطوات بسيطة لإنجاز مشاريعك وواجباتك الجامعية
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {[
+            { icon: GraduationCap, title: 'مشروع تخرج', desc: 'أدخل معلومات مشروعك، ارفع الملفات، واختر المكونات المطلوبة. نتولى نحن الباقي.', color: 'from-primary/20 to-primary/5' },
+            { icon: Presentation, title: 'عرض تقديمي', desc: 'حدد موضوع العرض، عدد الشرائح، الهوية البصرية. نصمم لك عرضاً احترافياً.', color: 'from-accent/20 to-accent/5' },
+            { icon: BookMarked, title: 'خدمة أكاديمية', desc: 'أرسل تفاصيل المهمة والتعليمات. نساعدك في التنسيق والتدقيق والإعداد.', color: 'from-info/20 to-info/5' },
+            { icon: FlaskConical, title: 'حلقة بحث', desc: 'حدد نوع البحث والمواصفات. نساعدك في الإعداد والتنسيق والمراجعة العلمية.', color: 'from-success/20 to-success/5' },
+          ].map((item, i) => {
+            const Icon = item.icon
+            return (
+              <div key={item.title} className="flex items-start gap-4 p-6 rounded-2xl bg-card shadow-card">
+                <div className={`relative flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center`}>
+                  <Icon className="w-6 h-6 text-secondary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-secondary mb-2">{item.title}</h3>
+                  <p className="text-sm text-secondary/60 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="text-center mt-12">
+          <Button size="lg" onClick={() => navigate('/academic-services')}>
+              استكشف الخدمات الأكاديمية
               <ArrowLeft className="w-5 h-5 mr-2" />
             </Button>
         </div>

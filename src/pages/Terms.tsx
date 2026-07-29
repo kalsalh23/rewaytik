@@ -12,7 +12,7 @@ export default function Terms() {
           </Link>
           <h1 className="text-4xl font-bold text-secondary mb-8">الشروط والأحكام</h1>
           <div className="space-y-6 text-secondary/70 leading-relaxed">
-            <p>باستخدامك لموقع "روايتك" فإنك توافق على هذه الشروط والأحكام. يرجى قراءتها بعناية.</p>
+            <p>باستخدامك لموقع "أنجز" فإنك توافق على هذه الشروط والأحكام. يرجى قراءتها بعناية.</p>
             <h2 className="text-xl font-bold text-secondary">الخدمات</h2>
             <p>نقدم خدمات تحويل القصص الشخصية إلى كتب مطبوعة. جميع المحتويات المقدمة من العميل تخضع للمراجعة لضمان ملاءمتها للنشر.</p>
             <h2 className="text-xl font-bold text-secondary">الملكية الفكرية</h2>

@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
           </Link>
           <h1 className="text-4xl font-bold text-secondary mb-8">سياسة الخصوصية</h1>
           <div className="space-y-6 text-secondary/70 leading-relaxed">
-            <p>نحن في "روايتك" نلتزم بحماية خصوصية مستخدمينا. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك الشخصية.</p>
+            <p>نحن في "أنجز" نلتزم بحماية خصوصية مستخدمينا. توضح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك الشخصية.</p>
             <h2 className="text-xl font-bold text-secondary">المعلومات التي نجمعها</h2>
             <p>نجمع المعلومات التالية عند استخدامك لخدماتنا: الاسم الكامل، البريد الإلكتروني، رقم الهاتف، عنوان الشحن، الصور والذكريات التي تشاركها معنا، ومعلومات الدفع.</p>
             <h2 className="text-xl font-bold text-secondary">كيف نستخدم معلوماتك</h2>
