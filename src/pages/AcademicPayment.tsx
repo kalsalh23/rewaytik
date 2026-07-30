@@ -29,13 +29,13 @@ export default function AcademicPayment() {
     if (type && id) {
       getAcademicOrder(type, id)
         .then((data) => {
-          if (data.paymentStatus !== 'pending') {
+          if (data.payment_status !== 'pending') {
             navigate('/my-academic-orders')
             return
           }
           setOrder(data)
         })
-        .catch(() => toast.error('لم يتم العثور على الطلب'))
+        .catch((e) => toast.error(e?.message || 'لم يتم العثور على الطلب'))
         .finally(() => setLoading(false))
     }
   }, [type, id])
@@ -111,7 +111,7 @@ export default function AcademicPayment() {
     )
   }
 
-  const orderTitle = order?.projectTitle || order?.researchTitle || order?.courseName || order?.project_title || ''
+  const orderTitle = order?.project_title || order?.research_title || order?.course_name || ''
 
   return (
     <div className="min-h-screen flex items-center justify-center py-20 px-4 bg-gradient-to-b from-primary/5 to-background">
@@ -134,7 +134,7 @@ export default function AcademicPayment() {
             <div className="p-4 rounded-xl bg-accent/30 mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-secondary/60">رقم الطلب</span>
-                <span className="font-medium text-sm">{order.orderNumber}</span>
+                <span className="font-medium text-sm">{order.order_number}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-secondary/60">الخدمة</span>

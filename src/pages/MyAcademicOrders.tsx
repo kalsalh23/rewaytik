@@ -73,7 +73,7 @@ export default function MyAcademicOrders() {
   }, [activeTab])
 
   const getTitle = (order: AcademicOrder) => {
-    return order.title || order.project_title || order.topic || 'بدون عنوان'
+    return order.project_title || order.research_title || order.course_name || order.topic || 'بدون عنوان'
   }
 
   const getServiceTypeLabel = (type: ServiceType) => {

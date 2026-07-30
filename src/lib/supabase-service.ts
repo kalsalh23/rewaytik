@@ -391,7 +391,8 @@ export async function updateManuscriptInternalNotes(id: string, internalNotes: s
 }
 
 export async function uploadManuscriptFinalFile(id: string, file: File, userId: string) {
-  const filePath = `${userId}/${Date.now()}-${file.name}`
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+  const filePath = `${userId}/${Date.now()}-${safeName}`
   const { error: uploadError } = await supabase.storage.from('manuscript-final').upload(filePath, file)
   if (uploadError) throw uploadError
   const { data: { publicUrl } } = supabase.storage.from('manuscript-final').getPublicUrl(filePath)
@@ -558,7 +559,8 @@ export async function updateAcademicInternalNotes(serviceType: string, id: strin
 export async function uploadAcademicFinalFile(serviceType: string, id: string, file: File, userId: string) {
   const table = ACADEMIC_TABLES[serviceType as keyof typeof ACADEMIC_TABLES]
   if (!table) throw new Error('Invalid service type')
-  const filePath = `academic/${serviceType}/${userId}/${Date.now()}-${file.name}`
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+  const filePath = `academic/${serviceType}/${userId}/${Date.now()}-${safeName}`
   const { error: uploadError } = await supabase.storage.from('academic-final').upload(filePath, file)
   if (uploadError) throw uploadError
   const { data: { publicUrl } } = supabase.storage.from('academic-final').getPublicUrl(filePath)
@@ -576,7 +578,8 @@ export async function archiveAcademicOrder(serviceType: string, id: string) {
 }
 
 export async function uploadAcademicFile(serviceType: string, orderId: string, file: File, userId: string, category: string = 'client') {
-  const filePath = `academic/${serviceType}/${userId}/${Date.now()}-${file.name}`
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+  const filePath = `academic/${serviceType}/${userId}/${Date.now()}-${safeName}`
   const { error: uploadError } = await supabase.storage.from('academic-uploads').upload(filePath, file)
   if (uploadError) throw uploadError
   const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
@@ -584,7 +587,7 @@ export async function uploadAcademicFile(serviceType: string, orderId: string, f
     order_id: orderId,
     service_type: serviceType,
     file_url: publicUrl,
-    file_name: file.name,
+    file_name: safeName,
     file_size: file.size,
     file_type: file.type,
     category,
