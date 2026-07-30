@@ -55,7 +55,12 @@ export default function CreatePresentation() {
       updateForm('universityLogoUrl', publicUrl)
       toast.success('تم رفع الشعار بنجاح')
     } catch (e: any) {
-      toast.error(e?.message || 'حدث خطأ أثناء رفع الشعار')
+      const msg = e?.message || ''
+      if (msg.includes('policy') || msg.includes('row-level security')) {
+        toast.error('خطأ في الصلاحيات')
+      } else {
+        toast.error(msg || 'حدث خطأ أثناء رفع الشعار')
+      }
     }
   }
 
