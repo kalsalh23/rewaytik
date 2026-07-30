@@ -46,12 +46,13 @@ export default function CreateAcademicTask() {
     try {
       const fileUrls: any[] = []
       for (const file of files) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-        const filePath = `academic-tasks/${user?.id}/${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
-        if (error) throw error
-        const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
-        fileUrls.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
+        const result = await new Promise<{ url: string; name: string; size: number; type: string }>((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve({ url: reader.result as string, name: file.name, size: file.size, type: file.type })
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+        fileUrls.push(result)
       }
 
       const pageNum = parseInt(form.pageCount) || 0

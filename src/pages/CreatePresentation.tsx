@@ -36,6 +36,15 @@ export default function CreatePresentation() {
   const updateColor = (index: number, value: string) => setCustomColors(prev => prev.map((c, i) => (i === index ? value : c)))
   const removeColor = (index: number) => setCustomColors(prev => prev.filter((_, i) => i !== index))
 
+  const fileToBase64 = (file: File): Promise<{ url: string; name: string; size: number; type: string }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve({ url: reader.result as string, name: file.name, size: file.size, type: file.type })
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || [])
     setFiles(prev => [...prev, ...newFiles])
@@ -47,20 +56,11 @@ export default function CreatePresentation() {
     const file = e.target.files?.[0]
     if (!file) return
     try {
-      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-      const filePath = `presentations/${user?.id}/${Date.now()}-${safeName}`
-      const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
-      if (error) throw error
-      const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
-      updateForm('universityLogoUrl', publicUrl)
+      const result = await fileToBase64(file)
+      updateForm('universityLogoUrl', result.url)
       toast.success('تم رفع الشعار بنجاح')
     } catch (e: any) {
-      const msg = e?.message || ''
-      if (msg.includes('policy') || msg.includes('row-level security')) {
-        toast.error('خطأ في الصلاحيات')
-      } else {
-        toast.error(msg || 'حدث خطأ أثناء رفع الشعار')
-      }
+      toast.error(e?.message || 'حدث خطأ أثناء رفع الشعار')
     }
   }
 
@@ -73,12 +73,8 @@ export default function CreatePresentation() {
     try {
       const fileUrls: any[] = []
       for (const file of files) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-        const filePath = `presentations/${user?.id}/${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
-        if (error) throw error
-        const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
-        fileUrls.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
+        const result = await fileToBase64(file)
+        fileUrls.push(result)
       }
 
       const filteredColors = customColors.filter(c => c.trim() !== '')

@@ -13,6 +13,15 @@ const shamCashInfo = {
   walletNumber: '97ceb947e59e77ef55fdfa062f0afcaf',
 }
 
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function AcademicPayment() {
   const { type, id } = useParams<{ type: string; id: string }>()
   const navigate = useNavigate()
@@ -77,22 +86,20 @@ export default function AcademicPayment() {
     if (!id || !type) return
     setSubmitting(true)
     try {
-      const safeName = paymentFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-      const filePath = `academic-payments/${type}/${user?.id}/${Date.now()}-${safeName}`
-      const { error: uploadError } = await supabase.storage
-        .from('academic-uploads')
-        .upload(filePath, paymentFile)
-      if (uploadError) throw uploadError
-      const { data: { publicUrl } } = supabase.storage
-        .from('academic-uploads')
-        .getPublicUrl(filePath)
-      await updateAcademicPayment(type, id, publicUrl, shamCashInfo.walletNumber)
+      const base64 = await fileToBase64(paymentFile)
+      const paymentData = {
+        url: base64,
+        name: paymentFile.name,
+        size: paymentFile.size,
+        type: paymentFile.type,
+      }
+      await updateAcademicPayment(type, id, base64, shamCashInfo.walletNumber)
       toast.success('تم إرسال إشعار الدفع! بانتظار المراجعة.')
       navigate('/my-academic-orders')
     } catch (e: any) {
       const msg = e?.message || ''
       if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {
-        toast.error('خطأ في قاعدة البيانات. يرجى التأكد من تنفيذ ملف الترحيل SQL')
+        toast.error('خطأ في قاعدة البيانات')
       } else if (msg.includes('policy') || msg.includes('row-level security')) {
         toast.error('خطأ في الصلاحيات')
       } else {

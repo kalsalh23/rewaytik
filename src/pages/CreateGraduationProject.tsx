@@ -20,6 +20,15 @@ const ADDITIONAL_SERVICES = [
   'تصميم قاعدة البيانات', 'تصميم واجهات المشروع', 'تصميم المخططات',
 ]
 
+function fileToBase64(file: File): Promise<{ url: string; name: string; size: number; type: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve({ url: reader.result as string, name: file.name, size: file.size, type: file.type })
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function CreateGraduationProject() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
@@ -61,12 +70,8 @@ export default function CreateGraduationProject() {
     try {
       const fileUrls: any[] = []
       for (const file of files) {
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-        const filePath = `graduation-projects/${user?.id}/${Date.now()}-${safeName}`
-        const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
-        if (error) throw error
-        const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
-        fileUrls.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
+        const result = await fileToBase64(file)
+        fileUrls.push(result)
       }
 
       const orderNumber = `GP-${Date.now().toString(36).toUpperCase()}`
