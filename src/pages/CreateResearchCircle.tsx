@@ -66,7 +66,8 @@ export default function CreateResearchCircle() {
     try {
       const fileUrls: any[] = []
       for (const file of files) {
-        const filePath = `research-circles/${user?.id}/${Date.now()}-${file.name}`
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const filePath = `research-circles/${user?.id}/${Date.now()}-${safeName}`
         const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
         if (error) throw error
         const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
@@ -74,7 +75,7 @@ export default function CreateResearchCircle() {
       }
 
       const orderNumber = `RC-${Date.now().toString(36).toUpperCase()}`
-      const { error } = await supabase.from('research_circles').insert({
+      const { data, error } = await supabase.from('research_circles').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
@@ -106,10 +107,10 @@ export default function CreateResearchCircle() {
         additional_services: form.additionalServices,
         additional_notes: form.additionalNotes,
         timeline: [{ status: 'new', date: new Date().toISOString() }],
-      })
+      }).select().single()
       if (error) throw error
       toast.success('تم إنشاء الطلب بنجاح!')
-      navigate('/my-academic-orders')
+      navigate(`/academic-payment/research_circle/${data.id}`)
     } catch (e: any) {
       const msg = e?.message || ''
       if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {

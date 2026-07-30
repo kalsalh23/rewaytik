@@ -61,7 +61,8 @@ export default function CreateGraduationProject() {
     try {
       const fileUrls: any[] = []
       for (const file of files) {
-        const filePath = `graduation-projects/${user?.id}/${Date.now()}-${file.name}`
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const filePath = `graduation-projects/${user?.id}/${Date.now()}-${safeName}`
         const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
         if (error) throw error
         const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
@@ -69,7 +70,7 @@ export default function CreateGraduationProject() {
       }
 
       const orderNumber = `GP-${Date.now().toString(36).toUpperCase()}`
-      const { error } = await supabase.from('graduation_projects').insert({
+      const { data, error } = await supabase.from('graduation_projects').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
@@ -95,10 +96,10 @@ export default function CreateGraduationProject() {
         additional_services: form.additionalServices,
         additional_notes: form.additionalNotes,
         timeline: [{ status: 'new', date: new Date().toISOString() }],
-      })
+      }).select().single()
       if (error) throw error
       toast.success('تم إنشاء الطلب بنجاح!')
-      navigate('/my-academic-orders')
+      navigate(`/academic-payment/graduation_project/${data.id}`)
     } catch (e: any) {
       const msg = e?.message || ''
       if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {

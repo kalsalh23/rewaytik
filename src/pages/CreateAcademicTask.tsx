@@ -60,7 +60,8 @@ export default function CreateAcademicTask() {
     try {
       const fileUrls: any[] = []
       for (const file of files) {
-        const filePath = `academic-tasks/${user?.id}/${Date.now()}-${file.name}`
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const filePath = `academic-tasks/${user?.id}/${Date.now()}-${safeName}`
         const { error } = await supabase.storage.from('academic-uploads').upload(filePath, file)
         if (error) throw error
         const { data: { publicUrl } } = supabase.storage.from('academic-uploads').getPublicUrl(filePath)
@@ -68,7 +69,7 @@ export default function CreateAcademicTask() {
       }
 
       const orderNumber = `AT-${Date.now().toString(36).toUpperCase()}`
-      const { error } = await supabase.from('academic_tasks').insert({
+      const { data, error } = await supabase.from('academic_tasks').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
@@ -88,10 +89,10 @@ export default function CreateAcademicTask() {
         additional_notes: form.additionalNotes,
         files: fileUrls,
         timeline: [{ status: 'new', date: new Date().toISOString() }],
-      })
+      }).select().single()
       if (error) throw error
       toast.success('تم إنشاء الطلب بنجاح!')
-      navigate('/my-academic-orders')
+      navigate(`/academic-payment/academic_task/${data.id}`)
     } catch (e: any) {
       const msg = e?.message || ''
       if (msg.includes('does not exist') || msg.includes('relation') || msg.includes('not found')) {

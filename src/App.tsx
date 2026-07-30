@@ -49,6 +49,7 @@ import CreatePresentation from '@/pages/CreatePresentation'
 import CreateAcademicTask from '@/pages/CreateAcademicTask'
 import CreateResearchCircle from '@/pages/CreateResearchCircle'
 import MyAcademicOrders from '@/pages/MyAcademicOrders'
+import AcademicPayment from '@/pages/AcademicPayment'
 
 const queryClient = new QueryClient()
 
@@ -114,6 +115,7 @@ function App() {
               <Route path="/create-academic-task" element={<CreateAcademicTask />} />
               <Route path="/create-research-circle" element={<CreateResearchCircle />} />
               <Route path="/my-academic-orders" element={<MyAcademicOrders />} />
+              <Route path="/academic-payment/:type/:id" element={<AcademicPayment />} />
             </Route>
           </Route>
 
