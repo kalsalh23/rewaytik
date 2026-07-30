@@ -83,11 +83,14 @@ export default function CreatePresentation() {
 
       const filteredColors = customColors.filter(c => c.trim() !== '')
       const orderNumber = `PR-${Date.now().toString(36).toUpperCase()}`
+      const slideNum = form.slideCount || 0
+      const totalPrice = slideNum * 3000
       const { data, error } = await supabase.from('presentations').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
         payment_status: 'pending',
+        payment_amount: totalPrice,
         project_title: form.projectTitle,
         slide_count: form.slideCount,
         language: form.language,
@@ -216,6 +219,13 @@ export default function CreatePresentation() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-secondary">ملاحظات إضافية</h3>
             <Textarea label="ملاحظات إضافية" value={form.additionalNotes} onChange={e => updateForm('additionalNotes', e.target.value)} rows={5} placeholder="أي ملاحظات أو تعليمات إضافية..." />
+            {(() => { const s = form.slideCount || 0; const total = s * 3000; return total > 0 ? (
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 text-center">
+                <p className="text-sm text-secondary/60">إجمالي التكلفة المتوقعة</p>
+                <p className="text-2xl font-bold text-primary mt-1">{total.toLocaleString('ar-SA')} ل.س</p>
+                <p className="text-xs text-secondary/60 mt-1">{s} شريحة × 3,000 ل.س</p>
+              </div>
+            ) : null; })()}
           </div>
         )
       default:

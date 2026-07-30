@@ -140,6 +140,28 @@ export default function AcademicPayment() {
                 <span className="text-sm text-secondary/60">الخدمة</span>
                 <span className="font-medium text-sm">{orderTitle}</span>
               </div>
+              {order.payment_amount > 0 && (
+                <div className="mt-4 pt-4 border-t border-border space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-secondary/60">عدد الصفحات</span>
+                    <span className="font-medium">{order.page_count || order.slide_count} {order.slide_count ? 'شريحة' : 'صفحة'}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-secondary/60">السعر الأساسي</span>
+                    <span className="font-medium">{(order.page_count || order.slide_count || 0) * 3000} ل.س</span>
+                  </div>
+                  {order.additional_services?.length > 0 && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-secondary/60">الخدمات الإضافية ({order.additional_services.length})</span>
+                      <span className="font-medium">+{order.additional_services.length * 5000} ل.س</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between pt-2 border-t border-border">
+                    <span className="font-semibold text-secondary">الإجمالي</span>
+                    <span className="text-xl font-bold text-primary">{order.payment_amount.toLocaleString('ar-SA')} ل.س</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

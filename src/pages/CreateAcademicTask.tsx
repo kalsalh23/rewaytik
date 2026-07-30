@@ -9,10 +9,6 @@ import { toast } from 'react-hot-toast'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/store/auth'
 
-const TASK_TYPES = [
-  'تقرير', 'بحث', 'دراسة حالة', 'مقال', 'عرض', 'واجب', 'أخرى',
-]
-
 const ADDITIONAL_SERVICES = [
   'تنسيق', 'تدقيق', 'تلخيص', 'تحويل PDF', 'تصميم PowerPoint',
 ]
@@ -24,37 +20,27 @@ export default function CreateAcademicTask() {
   const [loading, setLoading] = useState(false)
   const [files, setFiles] = useState<File[]>([])
   const [form, setForm] = useState({
-    courseName: '', university: '', major: '',
-    taskType: '', taskDescription: '', instructions: '', requirements: '',
-    language: 'arabic', wordCount: '', pageCount: '', citationStyle: '',
+    language: 'arabic', pageCount: '',
     additionalServices: [] as string[], additionalNotes: '',
   })
 
-  const totalSteps = 5
+  const totalSteps = 3
 
   const updateForm = (key: string, value: any) => setForm(prev => ({ ...prev, [key]: value }))
-
-  const toggleArrayItem = (item: string) => {
-    setForm(prev => ({
-      ...prev,
-      additionalServices: prev.additionalServices.includes(item)
-        ? prev.additionalServices.filter(i => i !== item)
-        : [...prev.additionalServices, item],
-    }))
-  }
-
+  const toggleArrayItem = (item: string) => setForm(prev => ({
+    ...prev,
+    additionalServices: prev.additionalServices.includes(item)
+      ? prev.additionalServices.filter(i => i !== item)
+      : [...prev.additionalServices, item],
+  }))
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || [])
     setFiles(prev => [...prev, ...newFiles])
   }
-
   const removeFile = (index: number) => setFiles(prev => prev.filter((_, i) => i !== index))
 
   const handleSubmit = async () => {
-    if (!form.courseName) { toast.error('يرجى إدخال اسم المادة'); return }
-    if (!form.university) { toast.error('يرجى إدخال اسم الجامعة'); return }
-    if (!form.major) { toast.error('يرجى إدخال التخصص'); return }
-    if (!form.taskType) { toast.error('يرجى اختيار نوع المهمة'); return }
+    if (!form.pageCount) { toast.error('يرجى إدخال عدد الصفحات'); return }
     if (files.length === 0) { toast.error('يرجى رفع ملف واحد على الأقل'); return }
     setLoading(true)
     try {
@@ -68,23 +54,18 @@ export default function CreateAcademicTask() {
         fileUrls.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
       }
 
+      const pageNum = parseInt(form.pageCount) || 0
+      const basePrice = pageNum * 3000
+      const extrasPrice = form.additionalServices.length * 5000
       const orderNumber = `AT-${Date.now().toString(36).toUpperCase()}`
       const { data, error } = await supabase.from('academic_tasks').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
         payment_status: 'pending',
-        course_name: form.courseName,
-        university: form.university,
-        major: form.major,
-        task_type: form.taskType,
-        task_description: form.taskDescription,
-        instructions: form.instructions,
-        requirements: form.requirements,
+        payment_amount: basePrice + extrasPrice,
         language: form.language,
-        word_count: form.wordCount,
         page_count: form.pageCount,
-        citation_style: form.citationStyle,
         additional_services: form.additionalServices,
         additional_notes: form.additionalNotes,
         files: fileUrls,
@@ -107,37 +88,13 @@ export default function CreateAcademicTask() {
     }
   }
 
+  const pageNum = parseInt(form.pageCount) || 0
+  const extrasCount = form.additionalServices.length
+  const previewPrice = pageNum * 3000 + extrasCount * 5000
+
   const renderStep = () => {
     switch (step) {
       case 1:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-secondary">معلومات المادة</h3>
-            <Input label="اسم المادة *" value={form.courseName} onChange={e => updateForm('courseName', e.target.value)} />
-            <Input label="الجامعة *" value={form.university} onChange={e => updateForm('university', e.target.value)} />
-            <Input label="التخصص" value={form.major} onChange={e => updateForm('major', e.target.value)} />
-          </div>
-        )
-      case 2:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-secondary">نوع المهمة</h3>
-            <div>
-              <label className="block text-sm font-medium text-secondary mb-2">نوع المهمة *</label>
-              <select value={form.taskType} onChange={e => updateForm('taskType', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-card text-secondary focus:outline-none focus:ring-2 focus:ring-primary/20">
-                <option value="">اختر نوع المهمة</option>
-                {TASK_TYPES.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-            <Textarea label="وصف المهمة" value={form.taskDescription} onChange={e => updateForm('taskDescription', e.target.value)} rows={3} />
-            <Textarea label="التعليمات" value={form.instructions} onChange={e => updateForm('instructions', e.target.value)} rows={3} />
-            <Textarea label="المتطلبات" value={form.requirements} onChange={e => updateForm('requirements', e.target.value)} rows={3} />
-          </div>
-        )
-      case 3:
         return (
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-secondary">رفع الملفات</h3>
@@ -160,10 +117,10 @@ export default function CreateAcademicTask() {
             )}
           </div>
         )
-      case 4:
+      case 2:
         return (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-secondary">المتطلبات</h3>
+            <h3 className="text-lg font-semibold text-secondary">المواصفات</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-secondary mb-2">اللغة</label>
@@ -174,13 +131,11 @@ export default function CreateAcademicTask() {
                   <option value="bilingual">ثنائية اللغة</option>
                 </select>
               </div>
-              <Input label="عدد الكلمات" value={form.wordCount} onChange={e => updateForm('wordCount', e.target.value)} />
-              <Input label="عدد الصفحات" value={form.pageCount} onChange={e => updateForm('pageCount', e.target.value)} />
-              <Input label="طريقة التوثيق" value={form.citationStyle} onChange={e => updateForm('citationStyle', e.target.value)} />
+              <Input label="عدد الصفحات *" type="number" value={form.pageCount} onChange={e => updateForm('pageCount', e.target.value)} />
             </div>
           </div>
         )
-      case 5:
+      case 3:
         return (
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-secondary">الخدمات الإضافية</h3>
@@ -191,11 +146,17 @@ export default function CreateAcademicTask() {
                     form.additionalServices.includes(service) ? 'border-primary bg-primary/5 text-primary' : 'border-border text-secondary/60 hover:border-primary/30'
                   }`}>
                   {form.additionalServices.includes(service) && <CheckCircle2 className="w-4 h-4 inline ml-1" />}
-                  {service}
+                  {service} (+5,000)
                 </button>
               ))}
             </div>
             <Textarea label="ملاحظات إضافية" value={form.additionalNotes} onChange={e => updateForm('additionalNotes', e.target.value)} rows={3} />
+            {previewPrice > 0 && (
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 text-center">
+                <p className="text-sm text-secondary/60">إجمالي التكلفة المتوقعة</p>
+                <p className="text-2xl font-bold text-primary mt-1">{previewPrice.toLocaleString('ar-SA')} ل.س</p>
+              </div>
+            )}
           </div>
         )
       default:

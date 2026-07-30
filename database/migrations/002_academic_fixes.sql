@@ -12,35 +12,26 @@ ALTER TABLE research_circles ADD COLUMN IF NOT EXISTS files JSONB DEFAULT '[]';
 INSERT INTO storage.buckets (id, name, public) VALUES ('academic-uploads', 'academic-uploads', true) ON CONFLICT (id) DO NOTHING;
 INSERT INTO storage.buckets (id, name, public) VALUES ('academic-final', 'academic-final', true) ON CONFLICT (id) DO NOTHING;
 
--- 3. Create storage policies using security definer function
+-- 3. Create storage policies (try with elevated role)
 DO $$
 BEGIN
-  -- academic-uploads policies
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Anyone can view academic-uploads') THEN
-    EXECUTE 'CREATE POLICY "Anyone can view academic-uploads" ON storage.objects FOR SELECT USING (bucket_id = ''academic-uploads'')';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Authenticated can upload to academic-uploads') THEN
-    EXECUTE 'CREATE POLICY "Authenticated can upload to academic-uploads" ON storage.objects FOR INSERT WITH CHECK (bucket_id = ''academic-uploads'' AND auth.role() = ''authenticated'')';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Owners can update academic-uploads') THEN
-    EXECUTE 'CREATE POLICY "Owners can update academic-uploads" ON storage.objects FOR UPDATE USING (bucket_id = ''academic-uploads'' AND auth.uid() = owner)';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Owners can delete academic-uploads') THEN
-    EXECUTE 'CREATE POLICY "Owners can delete academic-uploads" ON storage.objects FOR DELETE USING (bucket_id = ''academic-uploads'' AND auth.uid() = owner)';
-  END IF;
+  SET ROLE supabase_storage_admin;
 
-  -- academic-final policies
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Anyone can view academic-final') THEN
-    EXECUTE 'CREATE POLICY "Anyone can view academic-final" ON storage.objects FOR SELECT USING (bucket_id = ''academic-final'')';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Authenticated can upload to academic-final') THEN
-    EXECUTE 'CREATE POLICY "Authenticated can upload to academic-final" ON storage.objects FOR INSERT WITH CHECK (bucket_id = ''academic-final'' AND auth.role() = ''authenticated'')';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Owners can update academic-final') THEN
-    EXECUTE 'CREATE POLICY "Owners can update academic-final" ON storage.objects FOR UPDATE USING (bucket_id = ''academic-final'' AND auth.uid() = owner)';
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'objects' AND policyname = 'Owners can delete academic-final') THEN
-    EXECUTE 'CREATE POLICY "Owners can delete academic-final" ON storage.objects FOR DELETE USING (bucket_id = ''academic-final'' AND auth.uid() = owner)';
-  END IF;
+  -- academic-uploads
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Anyone can view academic-uploads" ON storage.objects FOR SELECT USING (bucket_id = ''academic-uploads'')';
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Authenticated can upload to academic-uploads" ON storage.objects FOR INSERT WITH CHECK (bucket_id = ''academic-uploads'' AND auth.role() = ''authenticated'')';
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Owners can update academic-uploads" ON storage.objects FOR UPDATE USING (bucket_id = ''academic-uploads'' AND auth.uid() = owner)';
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Owners can delete academic-uploads" ON storage.objects FOR DELETE USING (bucket_id = ''academic-uploads'' AND auth.uid() = owner)';
+
+  -- academic-final
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Anyone can view academic-final" ON storage.objects FOR SELECT USING (bucket_id = ''academic-final'')';
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Authenticated can upload to academic-final" ON storage.objects FOR INSERT WITH CHECK (bucket_id = ''academic-final'' AND auth.role() = ''authenticated'')';
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Owners can update academic-final" ON storage.objects FOR UPDATE USING (bucket_id = ''academic-final'' AND auth.uid() = owner)';
+  EXECUTE 'CREATE POLICY IF NOT EXISTS "Owners can delete academic-final" ON storage.objects FOR DELETE USING (bucket_id = ''academic-final'' AND auth.uid() = owner)';
+
+  RESET ROLE;
+EXCEPTION WHEN OTHERS THEN
+  RESET ROLE;
+  RAISE;
 END;
 $$;

@@ -70,11 +70,15 @@ export default function CreateGraduationProject() {
       }
 
       const orderNumber = `GP-${Date.now().toString(36).toUpperCase()}`
+      const pageNum = parseInt(form.pageCount) || 0
+      const basePrice = pageNum * 3000
+      const extrasPrice = form.additionalServices.length * 5000
       const { data, error } = await supabase.from('graduation_projects').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
         payment_status: 'pending',
+        payment_amount: basePrice + extrasPrice,
         project_title: form.projectTitle,
         university: form.university,
         faculty: form.faculty,
@@ -221,12 +225,18 @@ export default function CreateGraduationProject() {
                   className={`p-3 rounded-xl border text-sm font-medium transition-all cursor-pointer ${
                     form.additionalServices.includes(service) ? 'border-primary bg-primary/5 text-primary' : 'border-border text-secondary/60 hover:border-primary/30'
                   }`}>
-                  {form.additionalServices.includes(service) && <CheckCircle2 className="w-4 h-4 inline ml-1" />}
-                  {service}
+                    {form.additionalServices.includes(service) && <CheckCircle2 className="w-4 h-4 inline ml-1" />}
+                  {service} (+5,000)
                 </button>
               ))}
             </div>
             <Textarea label="ملاحظات إضافية" value={form.additionalNotes} onChange={e => updateForm('additionalNotes', e.target.value)} rows={3} />
+            {(() => { const p = parseInt(form.pageCount) || 0; const e = form.additionalServices.length; const total = p * 3000 + e * 5000; return total > 0 ? (
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 text-center">
+                <p className="text-sm text-secondary/60">إجمالي التكلفة المتوقعة</p>
+                <p className="text-2xl font-bold text-primary mt-1">{total.toLocaleString('ar-SA')} ل.س</p>
+              </div>
+            ) : null; })()}
           </div>
         )
       default:

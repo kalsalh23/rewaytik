@@ -28,8 +28,7 @@ export default function CreateResearchCircle() {
   const [form, setForm] = useState({
     researchTitle: '', university: '', faculty: '', department: '', courseName: '', supervisorName: '',
     researchType: 'حلقة بحث', topic: '', objectives: '', description: '', instructions: '', keywords: '',
-    language: 'arabic', pageCount: '', wordCount: '', fontStyle: '', fontSize: '', citationStyle: '', minReferences: '',
-    hasTables: false, hasImages: false,
+    language: 'arabic', pageCount: '',
     deliveryDate: '', deliveryTime: '', priority: 'normal',
     additionalServices: [] as string[], additionalNotes: '',
   })
@@ -60,6 +59,7 @@ export default function CreateResearchCircle() {
     if (!form.faculty) { toast.error('يرجى إدخال اسم الكلية'); return }
     if (!form.department) { toast.error('يرجى إدخال القسم'); return }
     if (!form.researchType) { toast.error('يرجى اختيار نوع البحث'); return }
+    if (!form.pageCount) { toast.error('يرجى إدخال عدد الصفحات'); return }
     if (!form.deliveryDate) { toast.error('يرجى تحديد تاريخ التسليم'); return }
     if (files.length === 0) { toast.error('يرجى رفع ملف واحد على الأقل'); return }
     setLoading(true)
@@ -74,12 +74,16 @@ export default function CreateResearchCircle() {
         fileUrls.push({ url: publicUrl, name: file.name, size: file.size, type: file.type })
       }
 
+      const pageNum = parseInt(form.pageCount) || 0
+      const basePrice = pageNum * 3000
+      const extrasPrice = form.additionalServices.length * 5000
       const orderNumber = `RC-${Date.now().toString(36).toUpperCase()}`
       const { data, error } = await supabase.from('research_circles').insert({
         user_id: user?.id,
         order_number: orderNumber,
         status: 'new',
         payment_status: 'pending',
+        payment_amount: basePrice + extrasPrice,
         research_title: form.researchTitle,
         university: form.university,
         faculty: form.faculty,
@@ -94,13 +98,6 @@ export default function CreateResearchCircle() {
         keywords: form.keywords,
         language: form.language,
         page_count: form.pageCount,
-        word_count: form.wordCount,
-        font_style: form.fontStyle,
-        font_size: form.fontSize,
-        citation_style: form.citationStyle,
-        min_references: form.minReferences,
-        has_tables: form.hasTables,
-        has_images: form.hasImages,
         delivery_date: form.deliveryDate || null,
         delivery_time: form.deliveryTime || null,
         priority: form.priority,
@@ -173,22 +170,7 @@ export default function CreateResearchCircle() {
                   <option value="bilingual">ثنائية اللغة</option>
                 </select>
               </div>
-              <Input label="عدد الصفحات" value={form.pageCount} onChange={e => updateForm('pageCount', e.target.value)} />
-              <Input label="عدد الكلمات" value={form.wordCount} onChange={e => updateForm('wordCount', e.target.value)} />
-              <Input label="نوع الخط" value={form.fontStyle} onChange={e => updateForm('fontStyle', e.target.value)} />
-              <Input label="حجم الخط" value={form.fontSize} onChange={e => updateForm('fontSize', e.target.value)} />
-              <Input label="طريقة التوثيق" value={form.citationStyle} onChange={e => updateForm('citationStyle', e.target.value)} />
-              <Input label="الحد الأدنى للمراجع" value={form.minReferences} onChange={e => updateForm('minReferences', e.target.value)} />
-            </div>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.hasTables} onChange={e => updateForm('hasTables', e.target.checked)} className="w-4 h-4 rounded" />
-                <span className="text-sm text-secondary">يوجد جداول</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.hasImages} onChange={e => updateForm('hasImages', e.target.checked)} className="w-4 h-4 rounded" />
-                <span className="text-sm text-secondary">يوجد صور</span>
-              </label>
+              <Input label="عدد الصفحات *" type="number" value={form.pageCount} onChange={e => updateForm('pageCount', e.target.value)} />
             </div>
           </div>
         )
@@ -249,11 +231,17 @@ export default function CreateResearchCircle() {
                     form.additionalServices.includes(service) ? 'border-primary bg-primary/5 text-primary' : 'border-border text-secondary/60 hover:border-primary/30'
                   }`}>
                   {form.additionalServices.includes(service) && <CheckCircle2 className="w-4 h-4 inline ml-1" />}
-                  {service}
+                  {service} (+5,000)
                 </button>
               ))}
             </div>
             <Textarea label="ملاحظات إضافية" value={form.additionalNotes} onChange={e => updateForm('additionalNotes', e.target.value)} rows={3} />
+            {(() => { const p = parseInt(form.pageCount) || 0; const e = form.additionalServices.length; const total = p * 3000 + e * 5000; return total > 0 ? (
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 text-center">
+                <p className="text-sm text-secondary/60">إجمالي التكلفة المتوقعة</p>
+                <p className="text-2xl font-bold text-primary mt-1">{total.toLocaleString('ar-SA')} ل.س</p>
+              </div>
+            ) : null; })()}
           </div>
         )
       default:
